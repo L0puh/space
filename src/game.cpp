@@ -1,5 +1,7 @@
 #include "game.h"
 #include <GLFW/glfw3.h>
+#include <fstream>
+#include <sstream>
 
 
 GLFWwindow* init_window(const int width, const int height){
@@ -56,4 +58,20 @@ GLsizei len, const GLchar* msg, const GLvoid* param){
       exit(-1);
    }
 
+}
+std::string load_from_file(const std::string& src){
+   std::string res; 
+   std::ifstream file;
+   file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+   try {
+      file.open(src.c_str());
+      std::stringstream stream;
+      stream << file.rdbuf();
+      file.close();
+      res = stream.str();
+   }
+   catch(std::ifstream::failure error){
+      utils::error(src, error.what());
+   }
+   return res;
 }
