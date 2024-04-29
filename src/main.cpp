@@ -17,7 +17,6 @@ int main() {
    while (!glfwWindowShouldClose(window)){
       glClearBufferfv(GL_COLOR, 0, bg);
 
-
       glfwSetKeyCallback(window, key_callback);
       glfwSwapBuffers(window);
       glfwPollEvents();

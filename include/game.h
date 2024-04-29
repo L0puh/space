@@ -73,7 +73,8 @@ class Vertex{
       void draw_buffer(GLenum mode, size_t size);
       void create_VBO(const void* data, size_t size);
       void create_EBO(const void* data, size_t size);
-
+      
+      void add_attribute(uint id, GLint size, GLenum type, GLboolean normalized, GLsizei stribe, size_t offset);
       void bind()  { glBindVertexArray(VAO);}
       void unbind(){ glBindVertexArray(0);}
 
@@ -88,12 +89,6 @@ class Vertex{
 };
 
 class Object {
-   private:
-      uint stribe=0;
-   public:
-      uint get_stribe(){return stribe;}
-
-
 };
 
 class Planet: public Object {
@@ -101,12 +96,14 @@ class Planet: public Object {
       Planet();
       ~Planet();
    public:
-      const std::string src_vertex="../shaders/planet.vert", 
+      uint ID;
+      const std::string src_vertex  ="../shaders/planet.vert", 
                         src_fragment="../shaders/planet.frag";
       Shader shader;
       const float verticies[];
       
    public:
+      void set_position(glm::vec3);
 
 };
 
