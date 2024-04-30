@@ -42,13 +42,6 @@ void frame_butter_size(GLFWwindow *window, int width, int height){
    glViewport(0, 0, width, height);
 }
 
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods){
-   switch(key){
-      case GLFW_KEY_Q: 
-         glfwSetWindowShouldClose(window, true);
-         return;
-   }
-}
 
 void GLAPIENTRY message_callback
 (GLenum src, GLenum type, GLuint id, GLuint severity,
@@ -75,3 +68,13 @@ std::string load_from_file(const std::string& src){
    }
    return res;
 }
+
+namespace Input {
+   void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods){
+      switch(key){
+         case GLFW_KEY_Q: 
+            glfwSetWindowShouldClose(window, true);
+            return;
+      }
+   }
+};

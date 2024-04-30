@@ -7,18 +7,8 @@
 #include <GLFW/glfw3.h>
 #include <string>
 #include <unordered_map>
-#include <vector>
 
-class Texture;
-class Object;
-class Planet;
-class Asteroid;
-class User;
-class Hole;
-class Vertex;
-class Shader;
-
-
+#define LEN(n) sizeof(n)/sizeof(n[0])
 /*********************************************************/
 /*                      COLORS                           */
 
@@ -34,7 +24,6 @@ GLFWwindow* init_window(const int width, const int height);
 void shut_down(GLFWwindow *window);
 void set_debug_mode();
 void frame_butter_size(GLFWwindow *window, int width, int height);
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 void GLAPIENTRY message_callback(GLenum src, GLenum type, GLuint id, GLuint severity,
                               GLsizei len, const GLchar* msg, const GLvoid* param);
 std::string load_from_file(const std::string& src);
@@ -67,18 +56,16 @@ class Vertex{
    public: 
       Vertex();
       ~Vertex();
-
    public:
       void draw(GLenum mode, size_t size);
       void draw_buffer(GLenum mode, size_t size);
       void create_VBO(const void* data, size_t size);
       void create_EBO(const void* data, size_t size);
-      
-      void add_attribute(uint id, GLint size, GLenum type, GLboolean normalized, GLsizei stribe, size_t offset);
+     
+      void add_attribute(uint id, GLint size, GLenum type, GLboolean normalized, GLsizei stride, size_t offset);
       void bind()  { glBindVertexArray(VAO);}
       void unbind(){ glBindVertexArray(0);}
 
-      void add_buffer();
       uint get_VAO(){ return VAO;}
       uint get_VBO(){ return VBO;}
       uint get_EBO(){ return EBO;}
@@ -88,59 +75,59 @@ class Vertex{
 
 };
 
+namespace Input {
+   void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
+};   
+
+class Texture {
+   public:
+      Texture();
+      ~Texture();
+   public:
+      const uint get_texture();
+      void create_texture(const std::string& src, int type, GLenum mode);
+      void delete_texture();
+      void use();
+      void unuse();
+   private:
+      uint texture_id;
+};
+
+
+class Camera {
+};
+
+
+/*********************************************************/
+/*                      OBJECTS                          */
 class Object {
 };
 
 class Planet: public Object {
    public:
-      Planet();
+      Planet(float verticies[], int indices[]);
       ~Planet();
    public:
       uint ID;
       const std::string src_vertex  ="../shaders/planet.vert", 
                         src_fragment="../shaders/planet.frag";
       Shader shader;
-      const float verticies[];
+      Vertex vtx;
+      float verticies[];
       
    public:
       void set_position(glm::vec3);
 
 };
 
-class Hole: public Object {
-};
+/* class Hole: public Object { */
+/* }; */
 
-class Asteroid: public Object {
-};
+/* class Asteroid: public Object { */
+/* }; */
 
-class User: public Object {
-};
-
-class Data {
-};
-
- 
-class Texture {
-   public:
-      Texture();
-      ~Texture();
-   public:
-      void create_texture(const std::string& src, int type, GLenum mode);
-      void delete_texture();
-      void use();
-      void unuse();
-      const uint get_texture();
-   private:
-      uint texture_id;
-};
-
-class Input {
-};
-
-class Camera {
-};
-
-
+/* class User: public Object { */
+/* }; */
 namespace utils{
    inline void log(std::string a){
       printf("[+]: %s\n",a.c_str());

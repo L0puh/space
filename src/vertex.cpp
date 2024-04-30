@@ -20,18 +20,29 @@ void Vertex::create_EBO(const void* data, size_t size){
    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, VBO);
    glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
 }
+
+/* with EBO, size is lenght of indices buffer*/
 void Vertex::draw(GLenum mode, size_t size){
    bind();
    glDrawElements(mode, size, GL_UNSIGNED_INT, 0);
    unbind();
 }
+/* without EBO, just buffer, size is count of elements */
 void Vertex::draw_buffer(GLenum mode, size_t size){
    bind();
    glDrawArrays(mode, 0, size);
    unbind();
 }
-void Vertex::add_buffer(){
+
+void Vertex::add_attribute
+(uint id, GLint size, GLenum type, 
+GLboolean normalized, GLsizei stride, size_t offset)
+{
    bind();
    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-   //TODO
+   glVertexAttribPointer(id, size, type, normalized, stride, (void*)offset);
+   glEnableVertexAttribArray(id);
+   unbind();
+
 }
+
