@@ -17,7 +17,7 @@ void Vertex::create_VBO(const void* data, size_t size){
 void Vertex::create_EBO(const void* data, size_t size){
    bind();
    glGenBuffers(1, &EBO);
-   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, VBO);
+   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
    glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
 }
 

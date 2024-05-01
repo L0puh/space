@@ -9,6 +9,30 @@
 #include <unordered_map>
 
 #define LEN(n) sizeof(n)/sizeof(n[0])
+
+/*********************************************************/
+/*                      DATA                             */
+
+const float SPEED = 0.03f;
+
+const float data_triangle[] = {
+    -0.5f, -0.5f, 0.0f,
+     0.5f, -0.5f, 0.0f,
+     0.0f,  0.5f, 0.0f
+};
+
+const float data_square[] = {
+     0.5f,  0.5f, 0.0f,  // top right
+     0.5f, -0.5f, 0.0f,  // bottom right
+    -0.5f, -0.5f, 0.0f,  // bottom left
+    -0.5f,  0.5f, 0.0f   // top left 
+};
+const uint indices_square[] = {
+    0, 1, 3,            // first triangle
+    1, 2, 3             // second triangle
+};
+
+
 /*********************************************************/
 /*                      COLORS                           */
 
@@ -19,6 +43,11 @@ static const GLfloat bg[] = {0.07f, 0.08f, 0.08f, 1.0f};
 
 /*********************************************************/
 /*                      ENGINE                           */
+
+struct direction {
+   float up_down=0;
+   float right_left=0;
+};
 
 GLFWwindow* init_window(const int width, const int height);
 void shut_down(GLFWwindow *window);
@@ -77,6 +106,8 @@ class Vertex{
 
 namespace Input {
    void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
+   void move_object(GLFWwindow* window, direction *move);
+   bool is_pressed(GLFWwindow* window, int key);
 };   
 
 class Texture {

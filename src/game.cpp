@@ -77,4 +77,27 @@ namespace Input {
             return;
       }
    }
+
+   bool is_pressed(GLFWwindow* window, int key){
+      return glfwGetKey(window, key) == GLFW_PRESS;
+   }
+   void move_object(GLFWwindow* window, direction *move) {
+      if (is_pressed(window, GLFW_KEY_A)){
+         if (move->right_left - SPEED <= -1) return;
+         move->right_left -= SPEED;
+      } 
+      if (is_pressed(window, GLFW_KEY_D)){
+         if (move->right_left + SPEED >= 1) return;
+
+         move->right_left += SPEED;
+      }
+      if (is_pressed(window, GLFW_KEY_W)){
+         if (move->up_down + SPEED >= 1) return;
+         move->up_down += SPEED;
+      }
+      if (is_pressed(window, GLFW_KEY_S)){
+         if (move->up_down - SPEED <= -1) return;
+         move->up_down -= SPEED;
+      }
+   }
 };
