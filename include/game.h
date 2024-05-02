@@ -13,7 +13,6 @@
 /*********************************************************/
 /*                      DATA                             */
 
-const float SPEED = 0.03f;
 
 const float data_triangle[] = {
     -0.5f, -0.5f, 0.0f,
@@ -106,7 +105,6 @@ class Vertex{
 
 namespace Input {
    void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
-   void move_object(GLFWwindow* window, direction *move);
    bool is_pressed(GLFWwindow* window, int key);
 };   
 
@@ -131,25 +129,22 @@ class Camera {
 
 /*********************************************************/
 /*                      OBJECTS                          */
-class Object {
-};
 
-class Planet: public Object {
+class Planet {
    public:
-      Planet(float verticies[], int indices[]);
+      Planet(std::string src_vertex, std::string src_fragment);
       ~Planet();
    public:
       uint ID;
-      const std::string src_vertex  ="../shaders/planet.vert", 
-                        src_fragment="../shaders/planet.frag";
       Shader shader;
-      Vertex vtx;
-      float verticies[];
+      Texture texture;
+      Vertex vertex;
       
    public:
       void set_position(glm::vec3);
 
 };
+
 
 /* class Hole: public Object { */
 /* }; */
@@ -157,22 +152,19 @@ class Planet: public Object {
 /* class Asteroid: public Object { */
 /* }; */
 
-/* class User: public Object { */
-/* }; */
-namespace utils{
-   inline void log(std::string a){
-      printf("[+]: %s\n",a.c_str());
-   }
-   inline void log(std::string a, std::string b){
-      printf("[+]: %s: %s\n",a.c_str(), b.c_str());
-   }
-   inline void error(std::string a){
-      printf("[!]: %s\n",a.c_str());
-   }
-   inline void error(std::string a, std::string b){
-      printf("[!]: %s: %s\n",a.c_str(), b.c_str());
-   }
+class User {
+   public: 
+      float speed = 0.03f;
+      int HP = 100, EXP = 0;
+      Vertex vertex;
+      Texture texture;
+      direction moving_direction;
+      Shader shader;
+
+   public:
+      User(std::string src_vertex, std::string src_fragment);
+      ~User();
+      void move_object(GLFWwindow* window);
+      void draw();
 };
-
-
 #endif 

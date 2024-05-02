@@ -1,4 +1,5 @@
 #include "game.h"
+#include "utils.h"
 #include <glm/gtc/type_ptr.hpp>
 
 Shader::Shader(const std::string& src_vertex, const std::string& src_fragment){
