@@ -130,21 +130,27 @@ class Camera {
 /*********************************************************/
 /*                      OBJECTS                          */
 
-class Planet {
+class Object {
    public:
-      Planet(std::string src_vertex, std::string src_fragment);
-      ~Planet();
-   public:
-      uint ID;
+      Object(std::string src_vertex, std::string src_fragment);
+      ~Object();
       Shader shader;
       Texture texture;
       Vertex vertex;
-      
    public:
-      void set_position(glm::vec3);
-
+      static void scale_object(GLFWwindow *window, glm::mat4 *model, glm::vec2 scaler);
+      static void translate_object(GLFWwindow *window, glm::mat4 *model, glm::vec2 pos);
+      static void rotate_object(GLFWwindow *window, glm::mat4 *model, float angle, glm::vec3 pos);
+      void draw(GLFWwindow* window, glm::mat4 &model);
 };
 
+class Planet: public Object{
+   public:
+      Planet(std::string src_vertex, std::string src_fragment) : Object(src_vertex, src_fragment){};
+   public:
+      uint ID;
+
+};
 
 /* class Hole: public Object { */
 /* }; */
@@ -152,19 +158,15 @@ class Planet {
 /* class Asteroid: public Object { */
 /* }; */
 
-class User {
+class User: public Object {
    public: 
       float speed = 0.03f;
       int HP = 100, EXP = 0;
-      Vertex vertex;
-      Texture texture;
       direction moving_direction;
-      Shader shader;
 
    public:
-      User(std::string src_vertex, std::string src_fragment);
-      ~User();
-      void move_object(GLFWwindow* window);
-      void draw();
+      User(std::string src_vertex, std::string src_fragment) : Object(src_vertex, src_fragment){};
+      void get_movement(GLFWwindow* window, glm::mat4* model);
 };
+
 #endif 

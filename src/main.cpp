@@ -18,14 +18,19 @@ int main() {
    User user("../shaders/user.vert", "../shaders/user.frag");
 
    while (!glfwWindowShouldClose(window)){
+      glm::mat4 model = glm::mat4(1.0f);
+
       glfwSetKeyCallback(window, Input::key_callback);
-      user.move_object(window); 
+
+      user.get_movement(window, &model); 
+      user.rotate_object(window, &model, glfwGetTime(), glm::vec3(0.0, 0.0, 1.0f));
+      user.scale_object(window, &model, glm::vec2(0.2, 0.2f));
 
       utils::debug_new_frame();
       utils::debug_console(window, &user);
       glClearBufferfv(GL_COLOR, 0, bg);
 
-      user.draw();
+      user.draw(window, model);
       utils::debug_console_render();
       glfwSwapBuffers(window);
       glfwPollEvents();
