@@ -5,8 +5,8 @@
 #define DEBUG_MODE
 
 int main() {
-
-   GLFWwindow *window = init_window(400, 400);
+   const float width = 400, height = 400;
+   GLFWwindow *window = init_window(width, height);
 
 #ifdef DEBUG_MODE
    utils::init_debug_console(window);
@@ -24,7 +24,7 @@ int main() {
 
       user.get_movement(window, &model); 
       user.rotate_object(window, &model, glfwGetTime(), glm::vec3(0.0, 0.0, 1.0f));
-      user.scale_object(window, &model, glm::vec2(0.2, 0.2f));
+      user.scale_object(window, &model, glm::vec2(0.3f, 0.3f));
 
       utils::debug_new_frame();
       utils::debug_console(window, &user);

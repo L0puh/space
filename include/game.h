@@ -47,6 +47,16 @@ struct direction {
    float up_down=0;
    float right_left=0;
 };
+struct window_size {
+   int width;
+   int height;
+};
+
+inline window_size get_window_size(GLFWwindow *window){
+   int width, height;
+   glfwGetFramebufferSize(window, &width, &height);
+   return {width, height};
+}
 
 GLFWwindow* init_window(const int width, const int height);
 void shut_down(GLFWwindow *window);
