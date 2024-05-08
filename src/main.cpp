@@ -7,6 +7,10 @@
 int main() {
    const float width = 400, height = 400;
    GLFWwindow *window = init_window(width, height);
+  
+   // transparent bg of textures
+   glEnable(GL_BLEND);
+   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 #ifdef DEBUG_MODE
    utils::init_debug_console(window);
@@ -15,7 +19,7 @@ int main() {
    utils::log("DEBUG MODE");
 #endif 
 
-   User user("../shaders/user.vert", "../shaders/user.frag");
+   User user("../shaders/user.vert", "../shaders/user.frag", "../textures/spaceship.png", PNG);
 
    while (!glfwWindowShouldClose(window)){
       glm::mat4 model = glm::mat4(1.0f);
@@ -23,19 +27,18 @@ int main() {
       glfwSetKeyCallback(window, Input::key_callback);
 
       user.get_movement(window, &model); 
-      user.rotate_object(window, &model, glfwGetTime(), glm::vec3(0.0, 0.0, 1.0f));
+      /* user.rotate_object(window, &model, glfwGetTime(), glm::vec3(0.0, 0.0, 1.0f)); */
       user.scale_object(window, &model, glm::vec2(0.3f, 0.3f));
 
       utils::debug_new_frame();
       utils::debug_console(window, &user);
       glClearBufferfv(GL_COLOR, 0, bg);
-
+   
       user.draw(window, model);
       utils::debug_console_render();
       glfwSwapBuffers(window);
       glfwPollEvents();
    }
-   
    shut_down(window);
    return 0;
 }

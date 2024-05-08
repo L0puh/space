@@ -4,11 +4,16 @@
 #include <glm/ext/matrix_transform.hpp>
 #include <string>
 
-Object::Object(std::string src_vertex, std::string src_fragment) : shader(src_vertex, src_fragment){
+Object::Object(std::string src_vertex, std::string src_fragment, std::string src_texture, Image img_type):
+   shader(src_vertex, src_fragment), texture(src_texture, img_type)
+{
+   texture.load_texture();
    vertex.create_VBO(data_square, sizeof(data_square));
    vertex.create_EBO(indices_square, sizeof(indices_square));
-   vertex.add_attribute(0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), 0);
+   vertex.add_attribute(0, 3, GL_FLOAT, GL_FALSE, 5*sizeof(float), 0);
+   vertex.add_attribute(1, 2, GL_FLOAT, GL_FALSE, 5*sizeof(float), 3);
 }
+
 Object::~Object(){
    shader.delete_shader();
    texture.delete_texture();
@@ -33,6 +38,7 @@ void Object::draw(GLFWwindow* window, glm::mat4 &model){
    shader.use();
    shader.set_matrix4fv("model", model);
    shader.set_matrix4fv("proj", proj);
+   texture.use();
    vertex.draw(GL_TRIANGLES, LEN(indices_square));
 }
 /****************************************************/

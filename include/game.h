@@ -21,14 +21,15 @@ const float data_triangle[] = {
 };
 
 const float data_square[] = {
-     0.5f,  0.5f, 0.0f,  // top right
-     0.5f, -0.5f, 0.0f,  // bottom right
-    -0.5f, -0.5f, 0.0f,  // bottom left
-    -0.5f,  0.5f, 0.0f   // top left 
+   // position          texture 
+     0.5f,  0.5f, 0.0f,  1.0f, 1.0f,    // top right
+     0.5f, -0.5f, 0.0f,  1.0f, 0.0f,   // bottom right
+    -0.5f, -0.5f, 0.0f,  0.0f, 0.0f,  // bottom left
+    -0.5f,  0.5f, 0.0f,  0.0f, 1.0f,   // top left 
 };
 const uint indices_square[] = {
-    0, 1, 3,            // first triangle
-    1, 2, 3             // second triangle
+    0, 1, 2,            // first triangle
+    0, 2, 3             // second triangle
 };
 
 
@@ -118,17 +119,24 @@ namespace Input {
    bool is_pressed(GLFWwindow* window, int key);
 };   
 
+enum Image {
+   PNG,
+   JPG,
+};
+
 class Texture {
    public:
-      Texture();
-      ~Texture();
+      Texture(std::string filename, Image image_type): filename(filename), type(image_type){}
+      ~Texture() {delete_texture();}
    public:
-      const uint get_texture();
-      void create_texture(const std::string& src, int type, GLenum mode);
+      const uint get_texture(){ return texture_id;}
+      void load_texture();
       void delete_texture();
       void use();
       void unuse();
    private:
+      int width, height, bit_depth, type;
+      std::string filename;
       uint texture_id;
 };
 
@@ -142,7 +150,7 @@ class Camera {
 
 class Object {
    public:
-      Object(std::string src_vertex, std::string src_fragment);
+      Object(std::string src_vertex, std::string src_fragment, std::string src_texture, Image img_type);
       ~Object();
       Shader shader;
       Texture texture;
@@ -156,7 +164,8 @@ class Object {
 
 class Planet: public Object{
    public:
-      Planet(std::string src_vertex, std::string src_fragment) : Object(src_vertex, src_fragment){};
+      Planet(std::string src_vertex, std::string src_fragment, std::string src_texture, Image img_type): 
+         Object(src_vertex, src_fragment, src_texture, img_type){};
    public:
       uint ID;
 
@@ -175,7 +184,8 @@ class User: public Object {
       direction moving_direction;
 
    public:
-      User(std::string src_vertex, std::string src_fragment) : Object(src_vertex, src_fragment){};
+      User(std::string src_vertex, std::string src_fragment, std::string src_texture, Image img_type):
+      Object(src_vertex, src_fragment, src_texture, img_type){};
       void get_movement(GLFWwindow* window, glm::mat4* model);
 };
 

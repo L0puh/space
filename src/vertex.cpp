@@ -40,7 +40,7 @@ GLboolean normalized, GLsizei stride, size_t offset)
 {
    bind();
    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-   glVertexAttribPointer(id, size, type, normalized, stride, (void*)offset);
+   glVertexAttribPointer(id, size, type, normalized, stride, (void*)(offset * sizeof(float)));
    glEnableVertexAttribArray(id);
    unbind();
 
