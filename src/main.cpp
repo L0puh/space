@@ -20,20 +20,24 @@ int main() {
 #endif 
 
    User user("../shaders/user.vert", "../shaders/user.frag", "../textures/spaceship.png", PNG);
+   Object bg_obj("../shaders/user.vert", "../shaders/user.frag", "../textures/bg.jpg", JPG);
 
    while (!glfwWindowShouldClose(window)){
-      glm::mat4 model = glm::mat4(1.0f);
-
+      glm::mat4 model, model_bg;
+      model = model_bg =  glm::mat4(1.0f);
       glfwSetKeyCallback(window, Input::key_callback);
-
+      
+      bg_obj.scale_object(window, &model_bg, glm::vec2(10.0f, 10.0f));
+      
       user.get_movement(window, &model); 
       /* user.rotate_object(window, &model, glfwGetTime(), glm::vec3(0.0, 0.0, 1.0f)); */
       user.scale_object(window, &model, glm::vec2(0.3f, 0.3f));
 
       utils::debug_new_frame();
       utils::debug_console(window, &user);
-      glClearBufferfv(GL_COLOR, 0, bg);
    
+      glClearBufferfv(GL_COLOR, 0, bg);
+      bg_obj.draw(window, model_bg);
       user.draw(window, model);
       utils::debug_console_render();
       glfwSwapBuffers(window);

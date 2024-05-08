@@ -34,7 +34,7 @@ void Object::draw(GLFWwindow* window, glm::mat4 &model){
    int width = get_window_size(window).width;
    int height = get_window_size(window).height;
    float aspect = (float)width/height;
-   glm::mat4 proj = glm::ortho(-aspect, aspect, -1.0f, 1.0f, 0.0f, 100.f );
+   glm::mat4 proj = glm::ortho(-aspect, aspect, -1.0f, 1.0f, 0.0f, 2.0f );
    shader.use();
    shader.set_matrix4fv("model", model);
    shader.set_matrix4fv("proj", proj);
