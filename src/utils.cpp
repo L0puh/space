@@ -17,11 +17,11 @@ namespace utils {
       ImGui::Render();
       ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
    }
-   void debug_console(GLFWwindow* window, User *user){
+   void debug_console(GLFWwindow* window, User *user, Camera *camera){
       ImGui::Begin("console", 0, ImGuiWindowFlags_AlwaysAutoResize);
       {
          ImGui::Text("USER:");
-         ImGui::SliderFloat("SPEED", &user->speed, 0, 1.0f, "%.4f", 0);
+         ImGui::SliderFloat("SPEED", &camera->speed, 0, 2.0f, "%.4f", 0);
          ImGui::SliderInt("HP", &user->HP, 0, 100, "%d", 0);
          ImGui::SliderInt("EXP", &user->EXP, 0, 100, "%d", 0);
       }

@@ -26,7 +26,7 @@ namespace utils{
       printf("[!]: %s: %s\n",a.c_str(), b.c_str());
    }
    void init_debug_console(GLFWwindow *window);
-   void debug_console(GLFWwindow *window, User *user);
+   void debug_console(GLFWwindow *window, User *user, Camera *camera);
    void debug_new_frame();
    void debug_console_render();
 };

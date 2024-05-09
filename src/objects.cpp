@@ -30,40 +30,22 @@ void Object::rotate_object(GLFWwindow *window, glm::mat4 *model, float angle, gl
    *model = glm::rotate(*model, angle, pos);
 }
 
-void Object::draw(GLFWwindow* window, glm::mat4 &model){
-   int width = get_window_size(window).width;
-   int height = get_window_size(window).height;
+void Object::draw(GLFWwindow* window, glm::mat4 &model, glm::mat4 view){
+   int width = get_window_size(window).width, 
+       height = get_window_size(window).height;
    float aspect = (float)width/height;
    glm::mat4 proj = glm::ortho(-aspect, aspect, -1.0f, 1.0f, 0.0f, 2.0f );
-   shader.use();
-   shader.set_matrix4fv("model", model);
-   shader.set_matrix4fv("proj", proj);
    texture.use();
+   shader.use();
+   shader.set_matrix4fv("proj", proj);
+   shader.set_matrix4fv("view", view);
+   shader.set_matrix4fv("model", model);
    vertex.draw(GL_TRIANGLES, LEN(indices_square));
 }
 /****************************************************/
 /*                   USER                          */
 
 
-void User::get_movement(GLFWwindow* window, glm::mat4 *model) {
-   if (Input::is_pressed(window, GLFW_KEY_A)){
-      if (!(moving_direction.right_left - speed <= -1.0)) 
-         moving_direction.right_left -= speed;
-   } 
-   if (Input::is_pressed(window, GLFW_KEY_D)){
-      if (!(moving_direction.right_left + speed >= 1.0))
-         moving_direction.right_left += speed;
-   }
-   if (Input::is_pressed(window, GLFW_KEY_W)){
-      if (!(moving_direction.up_down + speed >= 1.0))
-         moving_direction.up_down += speed;
-   }
-   if (Input::is_pressed(window, GLFW_KEY_S)){
-      if (!(moving_direction.up_down - speed <= -1.0))
-         moving_direction.up_down -= speed;
-   }
-   translate_object(window, model, glm::vec2(moving_direction.right_left, moving_direction.up_down));
-}
 /****************************************************/
 /*                   PLANET                        */
 

@@ -44,10 +44,6 @@ static const GLfloat bg[] = {0.07f, 0.08f, 0.08f, 1.0f};
 /*********************************************************/
 /*                      ENGINE                           */
 
-struct direction {
-   float up_down=0;
-   float right_left=0;
-};
 struct window_size {
    int width;
    int height;
@@ -142,6 +138,15 @@ class Texture {
 
 
 class Camera {
+   public:
+      float speed = 1.2, rotation = 0.0f;
+      glm::vec3 pos = glm::vec3(0.0f); 
+      glm::mat4 view = glm::mat4(1.0f), rotation_mat = glm::mat4(1.0f);
+   public: 
+      void update();
+      void set_position(glm::vec3 camera_pos) { pos = camera_pos; }
+      void get_movement(GLFWwindow* window, float deltatime);
+      //void zoom(float x); TODO
 };
 
 
@@ -159,7 +164,7 @@ class Object {
       static void scale_object(GLFWwindow *window, glm::mat4 *model, glm::vec2 scaler);
       static void translate_object(GLFWwindow *window, glm::mat4 *model, glm::vec2 pos);
       static void rotate_object(GLFWwindow *window, glm::mat4 *model, float angle, glm::vec3 pos);
-      void draw(GLFWwindow* window, glm::mat4 &model);
+      void draw(GLFWwindow* window, glm::mat4 &model, glm::mat4 view);
 };
 
 class Planet: public Object{
@@ -179,14 +184,12 @@ class Planet: public Object{
 
 class User: public Object {
    public: 
-      float speed = 0.03f;
       int HP = 100, EXP = 0;
-      direction moving_direction;
 
    public:
       User(std::string src_vertex, std::string src_fragment, std::string src_texture, Image img_type):
       Object(src_vertex, src_fragment, src_texture, img_type){};
-      void get_movement(GLFWwindow* window, glm::mat4* model);
 };
+
 
 #endif 

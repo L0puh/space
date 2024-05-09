@@ -7,10 +7,11 @@ out vec2 out_tex;
 
 uniform mat4 model;
 uniform mat4 proj;
+uniform mat4 view;
 
 void main()
 {
-   gl_Position = proj * model * vec4(pos, 1.0f);
+   gl_Position = proj * view * model * vec4(pos, 1.0f);
    out_color = vec4(pos, 0.5f);
    out_tex = tex;
 }
