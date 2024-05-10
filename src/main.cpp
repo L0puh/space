@@ -42,15 +42,16 @@ int main() {
       camera.update();
     
       bg_obj.scale_object(window, &model_bg, glm::vec2(10.0f, 10.0f));
-      user.translate_object(window, &model, camera.pos);
+      user.translate_object(window, &model, camera.pos-glm::vec3(0.0f, 0.3f, 0.0f));
+      user.rotate_object(window, &model, camera.rotation, glm::vec3(0.0f, 0.0f, 1.0f));
       user.scale_object(window, &model, glm::vec2(0.3f, 0.3f));
 
       utils::debug_new_frame();
       utils::debug_console(window, &user, &camera);
    
       glClearBufferfv(GL_COLOR, 0, bg);
-      bg_obj.draw(window, model_bg, glm::inverse(camera.view));
-      user.draw(window, model, glm::inverse(camera.view * camera.rotation_mat));
+      bg_obj.draw(window, model_bg, glm::inverse(camera.rotation_mat));
+      user.draw(window, model, glm::inverse(camera.rotation_mat));
       utils::debug_console_render();
       glfwSwapBuffers(window);
       glfwPollEvents();
