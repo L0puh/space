@@ -34,11 +34,12 @@ int main() {
    Object star("../shaders/standard.vert", "../shaders/standard.frag");
    Camera camera;
    
+   glm::vec2 bg_scale = {10.0f, 10.0f};
    float last_frame = 0.0f, deltatime;
    while (!glfwWindowShouldClose(window)){
       deltatime = get_deltatime(&last_frame); 
       glfwSetKeyCallback(window, Input::key_callback);
-      camera.get_movement(window, deltatime); 
+      camera.get_movement(window, deltatime, bg_scale, glm::vec2(0.3, 0.3)); 
       
       //objects.update();
       camera.update();
@@ -46,7 +47,7 @@ int main() {
       user.update();
       bg_obj.update();
     
-      bg_obj.scale_object(window, glm::vec2(10.0f, 10.0f));
+      bg_obj.scale_object(window, bg_scale);
       user.translate_object(window, camera.pos);
       user.rotate_object(window, camera.rotation, glm::vec3(0.0f, 0.0f, 1.0f));
       user.scale_object(window, glm::vec2(0.3f, 0.3f));
@@ -57,6 +58,7 @@ int main() {
       utils::debug_console(window, &user, &camera);
 
       //objects.draw(); 
+      bg_obj.draw(window, bg_obj.model, camera.view);
       planet.draw(window, planet.model, camera.view);
       user.draw(window, user.model, camera.view);
      

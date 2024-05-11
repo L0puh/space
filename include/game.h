@@ -144,12 +144,14 @@ class Texture {
 class Camera {
    public:
       float speed = 1.2, rotation = 0.0f;
+      float map_offset = 2.8f;
       glm::vec3 pos = glm::vec3(0.0f); 
       glm::mat4 view = glm::mat4(1.0f);
    public: 
       void update();
       void set_position(glm::vec3 camera_pos) { pos = camera_pos; }
-      void get_movement(GLFWwindow* window, float deltatime);
+      bool check_boarder(glm::vec2 map_size, glm::vec2 user_size, float x, float y);
+      void get_movement(GLFWwindow* window, float deltatime, glm::vec2 map_size, glm::vec2 user_size);
       //void zoom(float x); TODO
 };
 
@@ -163,6 +165,7 @@ class Object {
       Object(std::string src_vertex, std::string src_fragment);
       ~Object();
       glm::mat4 model = glm::mat4(1.0f);
+      glm::vec2 size;
       Shader shader;
       Image tex_type;
       Texture texture;
