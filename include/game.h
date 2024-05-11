@@ -20,6 +20,9 @@ const float data_triangle[] = {
      0.0f,  0.5f, 0.0f
 };
 
+const float data_dot[] = {
+    0.0f, 0.0f, 0.0f
+};
 const float data_square[] = {
    // position          texture 
      0.5f,  0.5f, 0.0f,  1.0f, 1.0f,    // top right
@@ -116,6 +119,7 @@ namespace Input {
 };   
 
 enum Image {
+   NONE,
    PNG,
    JPG,
 };
@@ -141,7 +145,7 @@ class Camera {
    public:
       float speed = 1.2, rotation = 0.0f;
       glm::vec3 pos = glm::vec3(0.0f); 
-      glm::mat4 view = glm::mat4(1.0f), rotation_mat = glm::mat4(1.0f);
+      glm::mat4 view = glm::mat4(1.0f);
    public: 
       void update();
       void set_position(glm::vec3 camera_pos) { pos = camera_pos; }
@@ -156,8 +160,10 @@ class Camera {
 class Object {
    public:
       Object(std::string src_vertex, std::string src_fragment, std::string src_texture, Image img_type);
+      Object(std::string src_vertex, std::string src_fragment);
       ~Object();
       Shader shader;
+      Image tex_type;
       Texture texture;
       Vertex vertex;
    public:

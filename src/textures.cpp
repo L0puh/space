@@ -5,6 +5,7 @@
 #include "utils.h"
 
 void Texture::load_texture(){
+   if (type == NONE) return;
    stbi_set_flip_vertically_on_load(1);
    unsigned char* src_texture = stbi_load(filename.c_str(), &width, &height, &bit_depth, 0);
    if (!src_texture) utils::error("failed to find", filename);

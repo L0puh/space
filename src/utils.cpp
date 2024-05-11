@@ -1,4 +1,6 @@
 #include "utils.h"
+#include "imgui/imgui.h"
+#include <string>
 
 namespace utils {
    void init_debug_console(GLFWwindow *window){
@@ -21,7 +23,16 @@ namespace utils {
       ImGui::Begin("console", 0, ImGuiWindowFlags_AlwaysAutoResize);
       {
          ImGui::Text("USER:");
+         ImGui::Text("x: %.4f, y: %.4f\nrotation: %.4f", 
+                                       camera->pos.y,
+                                       camera->pos.x,
+                                       camera->rotation);
+         ImGui::Text("sin: %.4f, cos: %.4f", 
+                                       sin(camera->rotation), 
+                                       cos(camera->rotation));
+                                                               
          ImGui::SliderFloat("SPEED", &camera->speed, 0, 2.0f, "%.4f", 0);
+         ImGui::SliderFloat("ROTATION", &camera->rotation, 0, 10.0f, "%.4f", 0);
          ImGui::SliderInt("HP", &user->HP, 0, 100, "%d", 0);
          ImGui::SliderInt("EXP", &user->EXP, 0, 100, "%d", 0);
       }
