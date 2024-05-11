@@ -28,48 +28,38 @@ int main() {
    utils::log("DEBUG MODE");
 #endif 
 
-   User user("../shaders/user.vert", "../shaders/user.frag", "../textures/spaceship.png", PNG);
+   User   user("../shaders/user.vert", "../shaders/user.frag", "../textures/spaceship.png", PNG);
+   Planet planet("../shaders/user.vert", "../shaders/user.frag", "../textures/planet.png", PNG, 1.0f);
    Object bg_obj("../shaders/user.vert", "../shaders/user.frag", "../textures/bg.jpg", JPG);
    Object star("../shaders/standard.vert", "../shaders/standard.frag");
    Camera camera;
    
-   float rand_points_x[320];
-   for (int i=0; i!=320;i++){
-      rand_points_x[i] = std::rand()*0.0000000001;
-      printf("%f\n", rand_points_x[i]);
-   }
-   float rand_points_y[320];
-   for (int i=0; i!=320;i++){
-      rand_points_y[i] = std::rand()*0.0000000001;
-      printf("%f\n", rand_points_y[i]);
-   }
-
-
    float last_frame = 0.0f, deltatime;
    while (!glfwWindowShouldClose(window)){
       deltatime = get_deltatime(&last_frame); 
-      glm::mat4 model, model_bg, model_star;
-      model = model_bg = glm::mat4(1.0f);
       glfwSetKeyCallback(window, Input::key_callback);
       camera.get_movement(window, deltatime); 
+      
+      //objects.update();
       camera.update();
+      planet.update();
+      user.update();
+      bg_obj.update();
     
-      bg_obj.scale_object(window, &model_bg, glm::vec2(10.0f, 10.0f));
-      user.translate_object(window, &model, camera.pos);
-      user.rotate_object(window, &model, camera.rotation, glm::vec3(0.0f, 0.0f, 1.0f));
-      user.scale_object(window, &model, glm::vec2(0.3f, 0.3f));
-
+      bg_obj.scale_object(window, glm::vec2(10.0f, 10.0f));
+      user.translate_object(window, camera.pos);
+      user.rotate_object(window, camera.rotation, glm::vec3(0.0f, 0.0f, 1.0f));
+      user.scale_object(window, glm::vec2(0.3f, 0.3f));
+      planet.scale_object(window, glm::vec2(1.0f, 1.0f));
+      
+      glClearBufferfv(GL_COLOR, 0, bg);
       utils::debug_new_frame();
       utils::debug_console(window, &user, &camera);
 
-      float x=0, y=0; 
-      glClearBufferfv(GL_COLOR, 0, bg);
-      bg_obj.draw(window, model_bg, camera.view);
-      for (int i = 0; i != 320; i++){
-         star.translate_object(window, &model_star, glm::vec2(rand_points_x[i], rand_points_y[i]));
-         star.draw(window, model_star, camera.view);
-      }
-      user.draw(window, model, camera.view);
+      //objects.draw(); 
+      planet.draw(window, planet.model, camera.view);
+      user.draw(window, user.model, camera.view);
+     
       utils::debug_console_render();
       glfwSwapBuffers(window);
       glfwPollEvents();

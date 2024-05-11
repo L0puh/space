@@ -24,6 +24,17 @@ Object::~Object(){
    shader.delete_shader();
    texture.delete_texture();
 }
+void Object::scale_object(GLFWwindow *window, glm::vec2 scaler){
+   model = glm::scale(model, glm::vec3(scaler.x, scaler.y, 0.0f));
+}
+
+void Object::translate_object(GLFWwindow *window, glm::vec2 pos){
+   model = glm::translate(model, glm::vec3(pos.x, pos.y, 0.0f));
+   
+}
+void Object::rotate_object(GLFWwindow *window, float angle, glm::vec3 pos){
+   model = glm::rotate(model, angle, pos);
+}
 void Object::scale_object(GLFWwindow *window, glm::mat4 *model, glm::vec2 scaler){
    *model = glm::scale(*model, glm::vec3(scaler.x, scaler.y, 0.0f));
    

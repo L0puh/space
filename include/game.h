@@ -162,23 +162,29 @@ class Object {
       Object(std::string src_vertex, std::string src_fragment, std::string src_texture, Image img_type);
       Object(std::string src_vertex, std::string src_fragment);
       ~Object();
+      glm::mat4 model = glm::mat4(1.0f);
       Shader shader;
       Image tex_type;
       Texture texture;
       Vertex vertex;
    public:
+      void update() { model = glm::mat4(1.0f); }
       static void scale_object(GLFWwindow *window, glm::mat4 *model, glm::vec2 scaler);
       static void translate_object(GLFWwindow *window, glm::mat4 *model, glm::vec2 pos);
       static void rotate_object(GLFWwindow *window, glm::mat4 *model, float angle, glm::vec3 pos);
+      void scale_object(GLFWwindow *window, glm::vec2 scaler);
+      void translate_object(GLFWwindow *window, glm::vec2 pos);
+      void rotate_object(GLFWwindow *window, float angle, glm::vec3 pos);
       void draw(GLFWwindow* window, glm::mat4 &model, glm::mat4 view);
 };
 
 class Planet: public Object{
    public:
-      Planet(std::string src_vertex, std::string src_fragment, std::string src_texture, Image img_type): 
-         Object(src_vertex, src_fragment, src_texture, img_type){};
+      Planet(std::string src_vertex, std::string src_fragment, std::string src_texture, Image img_type, float radius): 
+         Object(src_vertex, src_fragment, src_texture, img_type), radius(radius){};
    public:
       uint ID;
+      float radius;
 
 };
 
