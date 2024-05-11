@@ -29,12 +29,14 @@ void Object::scale_object(GLFWwindow *window, glm::vec2 scaler){
    size = scaler;
 }
 
-void Object::translate_object(GLFWwindow *window, glm::vec2 pos){
-   model = glm::translate(model, glm::vec3(pos.x, pos.y, 0.0f));
+void Object::translate_object(GLFWwindow *window, glm::vec2 pos_to){
+   model = glm::translate(model, glm::vec3(pos_to.x, pos_to.y, 0.0f));
+   pos = glm::vec3(pos_to.x-1.0f, pos_to.y-1.0f, 0.0f);
    
 }
 void Object::rotate_object(GLFWwindow *window, float angle, glm::vec3 pos){
    model = glm::rotate(model, angle, pos);
+
 }
 void Object::scale_object(GLFWwindow *window, glm::mat4 *model, glm::vec2 scaler){
    *model = glm::scale(*model, glm::vec3(scaler.x, scaler.y, 0.0f));
@@ -60,6 +62,8 @@ void Object::draw(GLFWwindow* window, glm::mat4 &model, glm::mat4 view){
    shader.set_matrix4fv("model", model);
    if (tex_type == NONE)
       vertex.draw_buffer(GL_POINTS, 1);
+   else if (tex_type == LINES)
+      vertex.draw_buffer(GL_LINES, 6);
    else
       vertex.draw(GL_TRIANGLES, LEN(indices_square));
 }

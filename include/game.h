@@ -7,8 +7,15 @@
 #include <GLFW/glfw3.h>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 #define LEN(n) sizeof(n)/sizeof(n[0])
+
+class Object;
+struct TEST_obj{
+      glm::vec2 pos;
+      glm::vec2 size;
+};
 
 /*********************************************************/
 /*                      DATA                             */
@@ -119,6 +126,7 @@ namespace Input {
 };   
 
 enum Image {
+   LINES,
    NONE,
    PNG,
    JPG,
@@ -147,11 +155,16 @@ class Camera {
       float map_offset = 2.8f;
       glm::vec3 pos = glm::vec3(0.0f); 
       glm::mat4 view = glm::mat4(1.0f);
+      GLFWwindow *window;
    public: 
       void update();
+      void set_window(GLFWwindow *win) {window = win;}
       void set_position(glm::vec3 camera_pos) { pos = camera_pos; }
       bool check_boarder(glm::vec2 map_size, glm::vec2 user_size, float x, float y);
-      void get_movement(GLFWwindow* window, float deltatime, glm::vec2 map_size, glm::vec2 user_size);
+      bool AABB_collision(TEST_obj obj, glm::vec2 user_size, glm::vec2 pos);
+      void get_movement(GLFWwindow* window, float deltatime, 
+            glm::vec2 map_sz, glm::vec2 user_sz, std::vector<TEST_obj>);
+      bool check_collisions(std::vector<TEST_obj> objs, glm::vec2 user_size, glm::vec2 pos);
       //void zoom(float x); TODO
 };
 
@@ -165,7 +178,8 @@ class Object {
       Object(std::string src_vertex, std::string src_fragment);
       ~Object();
       glm::mat4 model = glm::mat4(1.0f);
-      glm::vec2 size;
+      glm::vec2 size = glm::vec3(0.0f, 0.0f, 0.0f);
+      glm::vec3 pos = glm::vec3(0.0f);
       Shader shader;
       Image tex_type;
       Texture texture;
@@ -183,9 +197,9 @@ class Object {
 
 class Planet: public Object{
    public:
-      Planet(std::string src_vertex, std::string src_fragment, std::string src_texture, Image img_type, float radius): 
-         Object(src_vertex, src_fragment, src_texture, img_type), radius(radius){};
-   public:
+      Planet(std::string src_vertex, std::string src_fragment, std::string src_texture, Image img_type, float p_radius): 
+         Object(src_vertex, src_fragment, src_texture, img_type){ radius = p_radius;}
+    public:
       uint ID;
       float radius;
 

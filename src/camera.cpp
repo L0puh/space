@@ -1,5 +1,6 @@
 #include "game.h"
 #include "glm/ext/matrix_transform.hpp"
+#include <vector>
 
 void Camera::update(){
    view = glm::translate(glm::mat4(1.0f), pos);
@@ -13,7 +14,24 @@ bool Camera::check_boarder(glm::vec2 map_size, glm::vec2 user_size, float x, flo
    return pos || neg;
 }
 
-void Camera::get_movement(GLFWwindow* window, float deltatime, glm::vec2 map_size, glm::vec2 user_size) {
+bool Camera::AABB_collision(TEST_obj obj, glm::vec2 user_size, glm::vec2 pos){
+   //FIXME: add circle collision
+   bool x = pos.x < obj.pos.x + obj.size.x && pos.x + user_size.x > obj.pos.x; 
+   bool y = pos.y < obj.pos.y + obj.size.y && pos.y + user_size.y > obj.pos.y; 
+   return x && y;
+}
+
+bool Camera::check_collisions(std::vector<TEST_obj> objs, glm::vec2 user_size, glm::vec2 pos){
+   for (const auto& obj: objs)
+      if (AABB_collision(obj, user_size, pos)) return true;
+   return false;
+}
+
+void Camera::get_movement(GLFWwindow* window, 
+      float deltatime, 
+      glm::vec2 map_size, 
+      glm::vec2 user_size,
+      std::vector<TEST_obj> objs) {
    if (Input::is_pressed(window, GLFW_KEY_A)){
       rotation += speed * deltatime;
    } 
@@ -24,19 +42,19 @@ void Camera::get_movement(GLFWwindow* window, float deltatime, glm::vec2 map_siz
       float x=pos.x,y=pos.y;
       x += -sin(rotation) * speed * deltatime;
       y += cos(rotation) * speed * deltatime;
-      if (check_boarder(map_size, user_size, x, y)) {
+      if (check_boarder(map_size, user_size, x, y) || check_collisions(objs, user_size, {x, y})) {
          rotation-=speed*deltatime;
       } else 
          pos = {x, y, pos.z};
-
    }
    if (Input::is_pressed(window, GLFW_KEY_S)){
       float x = pos.x, y = pos.y;
       x -= -sin(rotation) * speed * deltatime;
       y -= cos(rotation) * speed * deltatime;
-      if (check_boarder(map_size, user_size, x, y))
-         return;
-      pos.x = x; pos.y = y;
+      if (check_boarder(map_size, user_size, x, y) || check_collisions(objs, user_size, {x,y}))
+         rotation+=speed*deltatime;
+      else
+         pos.x = x; pos.y = y;
    }
 }
 
