@@ -11,16 +11,28 @@
 
 #define LEN(n) sizeof(n)/sizeof(n[0])
 
+
+struct collider;
 class Object;
-struct TEST_obj{
-      glm::vec2 pos;
-      glm::vec2 size;
-      float radius;
-};
+class Planet;
+class User; 
+class Renderer;
+class Vertex;
+class Shader;
+class Texture;
+class Camera;
+
 
 /*********************************************************/
 /*                      DATA                             */
 
+const float square_vertices[] = {
+   // position          
+     0.5f,  0.5f, 0.0f, // top right
+     0.5f, -0.5f, 0.0f, // bottom right
+    -0.5f, -0.5f, 0.0f, // bottom left
+    -0.5f,  0.5f, 0.0f, // top left 
+};
 
 const float data_triangle[] = {
     -0.5f, -0.5f, 0.0f,
@@ -47,10 +59,11 @@ const uint indices_square[] = {
 /*********************************************************/
 /*                      COLORS                           */
 
-static const GLfloat red[] = {1.0f, 0.0f, 0.0f, 1.0f};
-static const GLfloat blue[] = {0.0f, 0.0f, 1.0f, 1.0f};
-static const GLfloat black[] = {0.0f, 0.0f, 0.0f, 1.0f};
-static const GLfloat bg[] = {0.07f, 0.08f, 0.08f, 1.0f};
+const glm::vec3 red = {1.0f, 0.0f, 0.0f};
+const glm::vec3 blue = {0.0f, 0.0f, 1.0f};
+const glm::vec3 black = {0.0f, 0.0f, 0.0f};
+const glm::vec3 grey = {0.13f, 0.186f, 0.176f};
+const GLfloat bg[] = {0.07f, 0.08f, 0.08f, 1.0f};
 
 /*********************************************************/
 /*                      ENGINE                           */
@@ -73,6 +86,7 @@ void frame_butter_size(GLFWwindow *window, int width, int height);
 void GLAPIENTRY message_callback(GLenum src, GLenum type, GLuint id, GLuint severity,
                               GLsizei len, const GLchar* msg, const GLvoid* param);
 std::string load_from_file(const std::string& src);
+
 
 class Shader {
    public:
@@ -114,7 +128,7 @@ class Vertex{
       uint get_VAO(){ return VAO;}
       uint get_VBO(){ return VBO;}
       uint get_EBO(){ return EBO;}
-
+      
    private: 
       uint VAO, VBO, EBO;
 
@@ -123,6 +137,7 @@ class Vertex{
 namespace Input {
    void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
    bool is_pressed(GLFWwindow* window, int key);
+   glm::vec2 get_mouse_pos(GLFWwindow *window);
 };   
 
 enum Image {
@@ -162,8 +177,8 @@ class Camera {
       void set_position(glm::vec3 camera_pos) { pos = camera_pos; }
       bool check_boarder(glm::vec2 map_size, glm::vec2 user_size, float x, float y);
       void get_movement(GLFWwindow* window, float deltatime, 
-            glm::vec2 map_sz, glm::vec2 user_sz, std::vector<TEST_obj>);
-      bool check_collisions(std::vector<TEST_obj> objs, glm::vec2 user_size, glm::vec2 pos);
+            glm::vec2 map_sz, glm::vec2 user_sz, std::vector<collider>);
+      bool check_collisions(std::vector<collider> objs, glm::vec2 user_size, glm::vec2 pos);
       //void zoom(float x); TODO
 };
 
@@ -174,7 +189,7 @@ class Camera {
 class Object {
    public:
       Object(std::string src_vertex, std::string src_fragment, std::string src_texture, Image img_type);
-      Object(std::string src_vertex, std::string src_fragment);
+      Object(std::string src_vertex, std::string src_fragment, Image img_type);
       ~Object();
       glm::mat4 model = glm::mat4(1.0f);
       glm::vec2 size = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -195,6 +210,7 @@ class Object {
       void translate_object(glm::vec2 pos);
       void rotate_object(float angle, glm::vec3 pos);
       void draw(GLFWwindow *window, glm::mat4 &model, glm::mat4 view);
+      void draw(GLFWwindow *window, glm::mat4 &model, glm::mat4 view, glm::vec3 color);
 };
 
 class Planet: public Object{

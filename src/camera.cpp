@@ -19,9 +19,9 @@ bool Camera::check_boarder(glm::vec2 map_size, glm::vec2 user_size, float x, flo
    return pos || neg;
 }
 
-bool Camera::check_collisions(std::vector<TEST_obj> objs, glm::vec2 user_size, glm::vec2 pos){
+bool Camera::check_collisions(std::vector<collider> objs, glm::vec2 user_size, glm::vec2 pos){
    for (const auto& obj: objs)
-      if (AABB_collision(obj, user_size, pos)) return true;
+      if (AABB_collision(obj, {user_size, pos, 2.0f})) return true;
    return false;
 }
 
@@ -29,7 +29,7 @@ void Camera::get_movement(GLFWwindow* window,
       float deltatime, 
       glm::vec2 map_size, 
       glm::vec2 user_size,
-      std::vector<TEST_obj> objs) {
+      std::vector<collider> objs) {
    if (Input::is_pressed(window, GLFW_KEY_A)){
       rotation += speed * deltatime;
    } 

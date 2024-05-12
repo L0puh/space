@@ -82,4 +82,14 @@ namespace Input {
    bool is_pressed(GLFWwindow* window, int key){
       return glfwGetKey(window, key) == GLFW_PRESS;
    }
+   glm::vec2 get_mouse_pos(GLFWwindow *window){
+      window_size sz;
+      float w, h;
+      double x,y;
+      sz = get_window_size(window);
+      glfwGetCursorPos(window, &x, &y);
+      x = -1.0 + 2.0 * x / sz.height;
+      y = 1.0 - 2.0 * y / sz.height; 
+      return {x, y};
+   }
 };

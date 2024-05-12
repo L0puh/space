@@ -1,10 +1,12 @@
 #include "game.h" 
+#include "collision.h"
 #include "utils.h"
+
 #include <GLFW/glfw3.h>
-#include <cstdlib>
 #include <vector>
 
 #define DEBUG_MODE
+#define COLLISION_P
 
 float get_deltatime(float *last_time){
    float time, deltatime;
@@ -31,17 +33,25 @@ int main() {
    User   user("../shaders/user.vert", "../shaders/user.frag", "../textures/spaceship.png", PNG);
    Planet planet("../shaders/user.vert", "../shaders/user.frag", "../textures/planet.png", PNG, 5.0f);
    Object bg_obj("../shaders/user.vert", "../shaders/user.frag", "../textures/bg.jpg", JPG);
-   Object star("../shaders/standard.vert", "../shaders/standard.frag");
+   Object star("../shaders/standard.vert", "../shaders/standard.frag", NONE);
+
+#ifdef COLLISION_P
+   collider c1, c2;
+   Collision_prototype coll_p(Collision_prototype::AABB_AABB, Collision_prototype::square, Collision_prototype::square);
+   coll_p.update_prototype(window, &c1, &c2);
+#endif
+
 
    Camera camera;
    camera.set_position({1.0f, 1.0f, 0.0f});
    user.pos = camera.pos;
-   std::vector<TEST_obj> objs;
+   std::vector<collider> objs;
    objs.push_back({planet.pos, planet.size, planet.radius});
 
    glm::vec2 bg_scale = {10.0f, 10.0f};
    float last_frame = 0.0f, deltatime;
 
+#ifndef COLLISION_P
    while (!glfwWindowShouldClose(window)){
       deltatime = get_deltatime(&last_frame); 
       glfwSetKeyCallback(window, Input::key_callback);
@@ -70,6 +80,7 @@ int main() {
       glfwSwapBuffers(window);
       glfwPollEvents();
    }
+#endif 
    shut_down(window);
    return 0;
 }
