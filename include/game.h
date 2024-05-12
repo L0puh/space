@@ -83,10 +83,10 @@ GLFWwindow* init_window(const int width, const int height);
 void shut_down(GLFWwindow *window);
 void set_debug_mode();
 void frame_butter_size(GLFWwindow *window, int width, int height);
-void GLAPIENTRY message_callback(GLenum src, GLenum type, GLuint id, GLuint severity,
-                              GLsizei len, const GLchar* msg, const GLvoid* param);
 std::string load_from_file(const std::string& src);
-
+float get_deltatime(float *last_time);
+void GLAPIENTRY message_callback(GLenum src, GLenum type, GLuint id, GLuint severity,
+                                 GLsizei len, const GLchar* msg, const GLvoid* param);
 
 class Shader {
    public:

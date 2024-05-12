@@ -32,6 +32,13 @@ GLFWwindow* init_window(const int width, const int height){
    return window;
 }
 
+float get_deltatime(float *last_time){
+   float time, deltatime;
+   time = glfwGetTime();
+   deltatime = time - *last_time;
+   *last_time= time;
+   return deltatime;
+}
 void shut_down(GLFWwindow *window){
    utils::log("shut down");
    glfwDestroyWindow(window);
