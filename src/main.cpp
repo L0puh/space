@@ -32,15 +32,16 @@ int main() {
    Planet planet("../shaders/user.vert", "../shaders/user.frag", "../textures/planet.png", PNG, 5.0f);
    Object bg_obj("../shaders/user.vert", "../shaders/user.frag", "../textures/bg.jpg", JPG);
    Object star("../shaders/standard.vert", "../shaders/standard.frag");
-   Camera camera;
-   camera.set_position({3.0f, 3.0f, 0.0f});
-   user.pos = camera.pos;
 
+   Camera camera;
+   camera.set_position({1.0f, 1.0f, 0.0f});
+   user.pos = camera.pos;
    std::vector<TEST_obj> objs;
-   objs.push_back({planet.pos, planet.size});
+   objs.push_back({planet.pos, planet.size, planet.radius});
 
    glm::vec2 bg_scale = {10.0f, 10.0f};
    float last_frame = 0.0f, deltatime;
+
    while (!glfwWindowShouldClose(window)){
       deltatime = get_deltatime(&last_frame); 
       glfwSetKeyCallback(window, Input::key_callback);
@@ -49,18 +50,11 @@ int main() {
       
       //objects.update();
       camera.update();
-      planet.update();
-      user.update();
-      bg_obj.update();
-      bg_obj.scale_object(window, bg_scale);
-      user.translate_object(window, camera.pos);
-      user.rotate_object(window, camera.rotation, glm::vec3(0.0f, 0.0f, 1.0f));
-      user.scale_object(window, glm::vec2(0.2f, 0.2f));
-
-      planet.translate_object(window, glm::vec2(2.0f, 2.0f));
-      planet.scale_object(window, glm::vec2(2.0f, 2.0f));
+      user.update(camera.pos, {0.2f, 0.2f}, camera.rotation);
+      planet.update({0.0f, 0.0f, 0.0f}, {2.0f, 2.0f});
+      bg_obj.update({0.0f, 0.0f, 0.0f}, bg_scale);
       
-      objs[0] = {planet.pos, planet.size};
+      objs[0] = {planet.pos, planet.size, planet.radius};
 
       glClearBufferfv(GL_COLOR, 0, bg);
       utils::debug_new_frame();

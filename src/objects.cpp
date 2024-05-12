@@ -10,6 +10,25 @@ Object::Object(std::string src_vertex, std::string src_fragment): shader(src_ver
    vertex.add_attribute(1, 2, GL_FLOAT, GL_FALSE, 5*sizeof(float), 3);
 }
 
+void Object::update(glm::vec3 pos, glm::vec2 scaler, float rotation){
+   update();
+   translate_object(pos);
+   rotate_object(rotation, glm::vec3(0.0f, 0.0f, 1.0f));
+   scale_object({scaler.x, scaler.y});
+}
+
+void Object::update(glm::vec3 pos, glm::vec2 scaler){
+   update();
+   translate_object(pos);
+   scale_object(scaler);
+}
+
+void Object::update(glm::vec3 pos, float rotation){
+   update();
+   translate_object(pos);
+   rotate_object(rotation, glm::vec3(0.0f, 0.0f, 1.0f));
+}
+
 Object::Object(std::string src_vertex, std::string src_fragment, std::string src_texture, Image img_type):
    shader(src_vertex, src_fragment), texture(src_texture, img_type), tex_type(img_type)
 {
@@ -24,28 +43,28 @@ Object::~Object(){
    shader.delete_shader();
    texture.delete_texture();
 }
-void Object::scale_object(GLFWwindow *window, glm::vec2 scaler){
+void Object::scale_object(glm::vec2 scaler){
    model = glm::scale(model, glm::vec3(scaler.x, scaler.y, 0.0f));
    size = scaler;
 }
 
-void Object::translate_object(GLFWwindow *window, glm::vec2 pos_to){
+void Object::translate_object(glm::vec2 pos_to){
    model = glm::translate(model, glm::vec3(pos_to.x, pos_to.y, 0.0f));
-   pos = glm::vec3(pos_to.x-1.0f, pos_to.y-1.0f, 0.0f);
+   pos = {pos_to.x - 1.0f, pos_to.y-1.0f, 0.0f};
    
 }
-void Object::rotate_object(GLFWwindow *window, float angle, glm::vec3 pos){
+void Object::rotate_object(float angle, glm::vec3 pos){
    model = glm::rotate(model, angle, pos);
 
 }
-void Object::scale_object(GLFWwindow *window, glm::mat4 *model, glm::vec2 scaler){
+void Object::scale_object(glm::mat4 *model, glm::vec2 scaler){
    *model = glm::scale(*model, glm::vec3(scaler.x, scaler.y, 0.0f));
 }
-void Object::translate_object(GLFWwindow *window, glm::mat4 *model, glm::vec2 pos){
+void Object::translate_object(glm::mat4 *model, glm::vec2 pos){
    *model = glm::translate(*model, glm::vec3(pos.x, pos.y, 0.0f));
    
 }
-void Object::rotate_object(GLFWwindow *window, glm::mat4 *model, float angle, glm::vec3 pos){
+void Object::rotate_object(glm::mat4 *model, float angle, glm::vec3 pos){
    *model = glm::rotate(*model, angle, pos);
 }
 
@@ -53,7 +72,7 @@ void Object::draw(GLFWwindow* window, glm::mat4 &model, glm::mat4 view){
    int width = get_window_size(window).width, 
        height = get_window_size(window).height;
    float aspect = (float)width/height;
-   glm::mat4 proj = glm::ortho(-aspect, aspect, -1.0f, 1.0f, 0.0f, 2.0f );
+   glm::mat4 proj = glm::ortho(-aspect, aspect, -1.0f, 1.0f, -1.0f, 1.0f );
    if (tex_type != NONE)
       texture.use();
    shader.use();

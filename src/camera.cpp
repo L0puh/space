@@ -1,10 +1,15 @@
 #include "game.h"
+#include "collision.h"
 #include "glm/ext/matrix_transform.hpp"
 #include <vector>
 
 void Camera::update(){
    view = glm::translate(glm::mat4(1.0f), pos);
+   
+   view = glm::translate(view, {0.5 * 0.2, 0.5*0.2, 0.0f}); //FIXME: user size 
    view = glm::rotate(view, rotation, glm::vec3(0.0f, 0.0f, 1.0f));
+   view = glm::translate(view, {-0.5 * 0.2, -0.5*0.2, 0.0f});
+
    view = glm::inverse(view);
 }
 
@@ -12,13 +17,6 @@ bool Camera::check_boarder(glm::vec2 map_size, glm::vec2 user_size, float x, flo
    bool pos = (x-user_size.x >= (map_size.x-map_offset)/2 || y-user_size.y >= (map_size.y-map_offset)/2);
    bool neg = (-x-user_size.x >= (map_size.x-map_offset)/2 || -y-user_size.y >= (map_size.y-map_offset)/2);
    return pos || neg;
-}
-
-bool Camera::AABB_collision(TEST_obj obj, glm::vec2 user_size, glm::vec2 pos){
-   //FIXME: add circle collision
-   bool x = pos.x < obj.pos.x + obj.size.x && pos.x + user_size.x > obj.pos.x; 
-   bool y = pos.y < obj.pos.y + obj.size.y && pos.y + user_size.y > obj.pos.y; 
-   return x && y;
 }
 
 bool Camera::check_collisions(std::vector<TEST_obj> objs, glm::vec2 user_size, glm::vec2 pos){

@@ -15,6 +15,7 @@ class Object;
 struct TEST_obj{
       glm::vec2 pos;
       glm::vec2 size;
+      float radius;
 };
 
 /*********************************************************/
@@ -72,7 +73,6 @@ void frame_butter_size(GLFWwindow *window, int width, int height);
 void GLAPIENTRY message_callback(GLenum src, GLenum type, GLuint id, GLuint severity,
                               GLsizei len, const GLchar* msg, const GLvoid* param);
 std::string load_from_file(const std::string& src);
-
 
 class Shader {
    public:
@@ -161,7 +161,6 @@ class Camera {
       void set_window(GLFWwindow *win) {window = win;}
       void set_position(glm::vec3 camera_pos) { pos = camera_pos; }
       bool check_boarder(glm::vec2 map_size, glm::vec2 user_size, float x, float y);
-      bool AABB_collision(TEST_obj obj, glm::vec2 user_size, glm::vec2 pos);
       void get_movement(GLFWwindow* window, float deltatime, 
             glm::vec2 map_sz, glm::vec2 user_sz, std::vector<TEST_obj>);
       bool check_collisions(std::vector<TEST_obj> objs, glm::vec2 user_size, glm::vec2 pos);
@@ -186,13 +185,16 @@ class Object {
       Vertex vertex;
    public:
       void update() { model = glm::mat4(1.0f); }
-      static void scale_object(GLFWwindow *window, glm::mat4 *model, glm::vec2 scaler);
-      static void translate_object(GLFWwindow *window, glm::mat4 *model, glm::vec2 pos);
-      static void rotate_object(GLFWwindow *window, glm::mat4 *model, float angle, glm::vec3 pos);
-      void scale_object(GLFWwindow *window, glm::vec2 scaler);
-      void translate_object(GLFWwindow *window, glm::vec2 pos);
-      void rotate_object(GLFWwindow *window, float angle, glm::vec3 pos);
-      void draw(GLFWwindow* window, glm::mat4 &model, glm::mat4 view);
+      void update(glm::vec3 pos, glm::vec2 scaler, float rotation);
+      void update(glm::vec3 pos, float rotation);
+      void update(glm::vec3 pos, glm::vec2 scaler);
+      static void scale_object(glm::mat4 *model, glm::vec2 scaler);
+      static void translate_object(glm::mat4 *model, glm::vec2 pos);
+      static void rotate_object(glm::mat4 *model, float angle, glm::vec3 pos);
+      void scale_object(glm::vec2 scaler);
+      void translate_object(glm::vec2 pos);
+      void rotate_object(float angle, glm::vec3 pos);
+      void draw(GLFWwindow *window, glm::mat4 &model, glm::mat4 view);
 };
 
 class Planet: public Object{
@@ -204,12 +206,6 @@ class Planet: public Object{
       float radius;
 
 };
-
-/* class Hole: public Object { */
-/* }; */
-
-/* class Asteroid: public Object { */
-/* }; */
 
 class User: public Object {
    public: 
