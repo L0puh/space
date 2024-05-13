@@ -29,7 +29,8 @@ int main() {
 
 #ifdef COLLISION_PROTOTYPE
    collider c1, c2;
-   Collision_prototype coll_p(Collision_prototype::AABB_AABB, Collision_prototype::square, Collision_prototype::square);
+   Collision_prototype coll_p(Collision_prototype::AABB_AABB, object_type::circle, object_type::square);
+   /* Collision_prototype coll_p(Collision_prototype::AABB_AABB, square, square); */
    coll_p.update_prototype(window, &c1, &c2);
 #endif
 

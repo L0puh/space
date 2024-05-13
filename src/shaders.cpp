@@ -2,7 +2,8 @@
 #include "utils.h"
 #include <glm/gtc/type_ptr.hpp>
 
-Shader::Shader(const std::string& src_vertex, const std::string& src_fragment){
+
+void Shader::init_shader(const std::string& src_vertex, const std::string& src_fragment){
    uint vertex, fragment;
    create_shader(&vertex, src_vertex, GL_VERTEX_SHADER); 
    create_shader(&fragment, src_fragment, GL_FRAGMENT_SHADER); 
@@ -19,7 +20,9 @@ Shader::Shader(const std::string& src_vertex, const std::string& src_fragment){
    } else utils::log("shader is linked", std::to_string(shader_id));
    glDeleteShader(vertex);
    glDeleteShader(fragment);
-
+}
+Shader::Shader(const std::string& src_vertex, const std::string& src_fragment){
+   init_shader(src_vertex, src_fragment);
 }
 void Shader::create_shader(uint *shader, const std::string& src, GLuint type){
    int res; char info[512];

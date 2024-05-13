@@ -27,7 +27,7 @@ GLFWwindow* init_window(const int width, const int height){
       glfwTerminate();
       return 0;
    }
-   glfwSetFramebufferSizeCallback(window, frame_butter_size);
+   glfwSetFramebufferSizeCallback(window, frame_buffer_size);
    utils::log("init window");
    return window;
 }
@@ -45,7 +45,7 @@ void shut_down(GLFWwindow *window){
    glfwTerminate();
 }
 
-void frame_butter_size(GLFWwindow *window, int width, int height){
+void frame_buffer_size(GLFWwindow *window, int width, int height){
    utils::log("changed view port");
    glViewport(0, 0, width, height);
 }
@@ -95,8 +95,8 @@ namespace Input {
       double x,y;
       sz = get_window_size(window);
       glfwGetCursorPos(window, &x, &y);
-      x = -1.0 + 2.0 * x / sz.height;
-      y = 1.0 - 2.0 * y / sz.height; 
+      x = 2*(x/sz.width)-1;
+      y = -2*(y/sz.height)+1;
       return {x, y};
    }
 };

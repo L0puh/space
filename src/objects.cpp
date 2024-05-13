@@ -4,6 +4,29 @@
 #include <glm/ext/matrix_transform.hpp>
 #include <string>
 
+void Object::add_shaders(std::string src_vertex, std::string src_fragment){
+   shader.init_shader(src_vertex, src_fragment);
+}
+void Object::add_texture(std::string src_texture, Image img_type){
+   tex_type = img_type;
+   if (img_type == NONE || img_type == LINES) return;
+   texture.init_texture(src_texture, img_type);
+   texture.load_texture();
+}
+
+Object::Object(object_type type){
+   if (type == circle){
+      vertex.create_VBO(data_square, sizeof(data_square));
+      vertex.create_EBO(indices_square, sizeof(indices_square));
+      vertex.add_attribute(0, 3, GL_FLOAT, GL_FALSE, 5*sizeof(float), 0);
+      vertex.add_attribute(1, 2, GL_FLOAT, GL_FALSE, 5*sizeof(float), 3);
+   } else {
+      vertex.create_VBO(data_square, sizeof(data_square));
+      vertex.create_EBO(indices_square, sizeof(indices_square));
+      vertex.add_attribute(0, 3, GL_FLOAT, GL_FALSE, 5*sizeof(float), 0);
+   }
+
+}
 Object::Object(std::string src_vertex, std::string src_fragment, Image img_type): 
    shader(src_vertex, src_fragment), 
    texture("", NONE), tex_type(img_type)

@@ -4,6 +4,10 @@
 #include "game.h"
 #include "utils.h"
 
+void Texture::init_texture(std::string filename_src, Image img_type_src){
+   filename = filename_src;
+   type = img_type_src;
+}
 void Texture::load_texture(){
    if (type == NONE) return;
    stbi_set_flip_vertically_on_load(1);

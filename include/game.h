@@ -11,7 +11,6 @@
 
 #define LEN(n) sizeof(n)/sizeof(n[0])
 
-
 struct collider;
 class Object;
 class Planet;
@@ -22,6 +21,10 @@ class Shader;
 class Texture;
 class Camera;
 
+enum object_type {
+   circle,
+   square
+};
 
 /*********************************************************/
 /*                      DATA                             */
@@ -82,7 +85,7 @@ inline window_size get_window_size(GLFWwindow *window){
 GLFWwindow* init_window(const int width, const int height);
 void shut_down(GLFWwindow *window);
 void set_debug_mode();
-void frame_butter_size(GLFWwindow *window, int width, int height);
+void frame_buffer_size(GLFWwindow *window, int width, int height);
 std::string load_from_file(const std::string& src);
 float get_deltatime(float *last_time);
 void GLAPIENTRY message_callback(GLenum src, GLenum type, GLuint id, GLuint severity,
@@ -91,8 +94,10 @@ void GLAPIENTRY message_callback(GLenum src, GLenum type, GLuint id, GLuint seve
 class Shader {
    public:
       Shader(const std::string& src_vertex, const std::string& src_fragment);
+      Shader() {}
       ~Shader() { delete_shader(); }
    public:
+      void init_shader(const std::string& src_vertex, const std::string& src_fragment);
       void create_shader(uint *shader, const std::string& src, GLuint type);
       void delete_shader();
       void use()  { glUseProgram(shader_id);}
@@ -149,9 +154,11 @@ enum Image {
 
 class Texture {
    public:
-      Texture(std::string filename, Image image_type): filename(filename), type(image_type){}
+      Texture() {}
+      Texture(std::string filename, Image image_type){init_texture(filename, image_type);}
       ~Texture() {delete_texture();}
    public:
+      void init_texture(std::string filename, Image img_type);
       const uint get_texture(){ return texture_id;}
       void load_texture();
       void delete_texture();
@@ -188,6 +195,7 @@ class Camera {
 
 class Object {
    public:
+      Object(object_type);
       Object(std::string src_vertex, std::string src_fragment, std::string src_texture, Image img_type);
       Object(std::string src_vertex, std::string src_fragment, Image img_type);
       ~Object();
@@ -199,6 +207,8 @@ class Object {
       Texture texture;
       Vertex vertex;
    public:
+      void add_shaders(std::string src_vertex, std::string src_fragment);
+      void add_texture(std::string src_texture, Image img_type);
       void update() { model = glm::mat4(1.0f); }
       void update(glm::vec3 pos, glm::vec2 scaler, float rotation);
       void update(glm::vec3 pos, float rotation);
