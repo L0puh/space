@@ -41,7 +41,7 @@ void Collision_prototype::update_prototype(GLFWwindow* window, collider *c1, col
       glClearBufferfv(GL_COLOR, 0, bg);
       glfwSetKeyCallback(window, Input::key_callback);
       c1->pos = Input::get_mouse_pos(window);
-      c1->size = {0.2f, 0.2f};
+      c1->size = {0.3f, 0.3f};
       c1->radius = c1->size.x/sqr_2;
 
       c2->pos = {0.0f, 0.0f};
