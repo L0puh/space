@@ -6,7 +6,7 @@
 #include <vector>
 
 #define DEBUG_MODE
-#define COLLISION_PROTOTYPE
+/* #define COLLISION_PROTOTYPE */
 
 
 int main() {
@@ -29,8 +29,8 @@ int main() {
 
 #ifdef COLLISION_PROTOTYPE
    collider c1, c2;
-   Collision_prototype coll_p(Collision_prototype::AABB_AABB, object_type::circle, object_type::square);
-   /* Collision_prototype coll_p(Collision_prototype::AABB_AABB, square, square); */
+   /* Collision_prototype coll_p(Collision_prototype::AABB_AABB, object_type::circle, object_type::square); */
+   Collision_prototype coll_p(Collision_prototype::AABB_AABB, square, square);
    coll_p.update_prototype(window, &c1, &c2);
 #endif
 
@@ -47,17 +47,25 @@ int main() {
 #ifndef COLLISION_PROTOTYPE
    while (!glfwWindowShouldClose(window)){
       deltatime = get_deltatime(&last_frame); 
-      glfwSetKeyCallback(window, Input::key_callback);
-      camera.get_movement(window, deltatime, bg_scale, glm::vec2(0.3, 0.3), objs); 
       camera.set_window(window);
+      glfwSetKeyCallback(window, Input::key_callback);
       
-      //objects.update();
       camera.update();
-      user.update(camera.pos, {0.2f, 0.2f}, camera.rotation);
-      planet.update({0.0f, 0.0f, 0.0f}, {2.0f, 2.0f});
-      bg_obj.update({0.0f, 0.0f, 0.0f}, bg_scale);
+      planet.update();
+      user.update();
+      bg_obj.update();
+
+      bg_obj.scale_object(bg_scale);
+      planet.translate_object(planet.pos);
+      planet.scale_object(planet.size);
+
+      objs[0] = {planet.pos, planet.size, planet.size.x/sqr_2};
       
-      objs[0] = {planet.pos, planet.size, planet.radius};
+      camera.get_movement(window, deltatime, bg_scale, user.size, objs); 
+      user.translate_object(camera.pos);
+      user.rotate_object(camera.rotation, glm::vec3(0.0f, 0.0f, 1.0f));
+      user.scale_object(user.size);
+
 
       glClearBufferfv(GL_COLOR, 0, bg);
       utils::debug_new_frame();
@@ -66,7 +74,7 @@ int main() {
       //objects.draw(); 
       bg_obj.draw(window, bg_obj.model, camera.view);
       planet.draw(window, planet.model, camera.view);
-      star.draw(window, user.model, camera.view);
+      /* star.draw(window, user.model, camera.view); */
       user.draw(window, user.model, camera.view);
      
       utils::debug_console_render();

@@ -7,6 +7,7 @@ playground with different types of collisions
 
 #ifndef COLLISION_H
 #define COLLISION_H
+#define sqr_2 1.41421356237f
 
 #include "game.h"
 

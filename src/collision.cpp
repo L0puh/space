@@ -2,7 +2,6 @@
 #include "game.h"
 #include "glm/common.hpp"
 #include "glm/geometric.hpp"
-#define sqr_2 1.41421356237f
 
 Collision_prototype::Collision_prototype(collision_type t, object_type x, object_type y):
    type(t), obj1_t(x), obj2_t(y), obj1(x), obj2(y)
@@ -19,8 +18,8 @@ Collision_prototype::Collision_prototype(collision_type t, object_type x, object
 }
 
 bool AABB_collision(collider obj, collider obj2){
-   bool x = obj2.pos.x < obj.pos.x + obj.size.x && obj2.pos.x + obj2.size.x > obj.pos.x; 
-   bool y = obj2.pos.y < obj.pos.y + obj.size.y && obj2.pos.y + obj2.size.y > obj.pos.y; 
+   bool x = obj2.pos.x <= obj.pos.x + obj.size.x && obj2.pos.x + obj2.size.x >= obj.pos.x; 
+   bool y = obj2.pos.y <= obj.pos.y + obj.size.y && obj2.pos.y + obj2.size.y >= obj.pos.y; 
    return x && y;
 }
 
@@ -42,30 +41,27 @@ void Collision_prototype::update_prototype(GLFWwindow* window, collider *c1, col
       glClearBufferfv(GL_COLOR, 0, bg);
       glfwSetKeyCallback(window, Input::key_callback);
       c1->pos = Input::get_mouse_pos(window);
-      if (obj1_t == square){
-         c1->size = {0.3f, 0.3f};
-         c1->radius = 0.0f;
-      } else if (obj1_t == circle){
-         c1->size = {0.2f, 0.2f};
-         c1->radius = c1->size.x/sqr_2;
-      }
+      c1->size = {0.2f, 0.2f};
+      c1->radius = c1->size.x/sqr_2;
+
       c2->pos = {0.0f, 0.0f};
       c2->size = {0.3f, 0.3f};
       c2->radius = 1.0f;
 
+      obj1.update();
+      obj1.translate_object(c1->pos);
+      obj1.scale_object(c1->size);
+
+      obj2.update();
+      obj2.translate_object(c2->pos);
+      obj2.scale_object(c2->size);
+
+      obj1.draw(window, obj1.model, glm::mat4(1.0f), blue);
       if (run_prototype(*c1, *c2)){
-         obj1.update({c1->pos.x, c1->pos.y, 0.0f}, c1->size);
-         obj1.draw(window, obj1.model, glm::mat4(1.0f), blue);
-
-         obj2.update({c2->pos.x, c2->pos.y, 0.0f}, c2->size);
          obj2.draw(window, obj2.model, glm::mat4(1.0f), blue);
-      } else {
-         obj1.update({c1->pos.x, c1->pos.y, 0.0f}, c1->size);
-         obj1.draw(window, obj1.model, glm::mat4(1.0f), blue);
-
-         obj2.update({c2->pos.x, c2->pos.y, 0.0f}, c2->size);
+      } else 
          obj2.draw(window, obj2.model, glm::mat4(1.0f), red);
-      }
+
       glfwSwapBuffers(window);
       glfwPollEvents();
    }

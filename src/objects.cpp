@@ -2,6 +2,7 @@
 #include "glm/ext/matrix_clip_space.hpp"
 #include <GLFW/glfw3.h>
 #include <glm/ext/matrix_transform.hpp>
+#include <memory>
 #include <string>
 
 void Object::add_shaders(std::string src_vertex, std::string src_fragment){
@@ -57,39 +58,6 @@ Object::~Object(){
    texture.delete_texture();
 }
 
-void Object::update(glm::vec3 pos, glm::vec2 scaler, float rotation){
-   update();
-   translate_object(pos);
-   rotate_object(rotation, glm::vec3(0.0f, 0.0f, 1.0f));
-   scale_object({scaler.x, scaler.y});
-}
-
-void Object::update(glm::vec3 pos, glm::vec2 scaler){
-   update();
-   translate_object(pos);
-   scale_object(scaler);
-}
-
-void Object::update(glm::vec3 pos, float rotation){
-   update();
-   translate_object(pos);
-   rotate_object(rotation, glm::vec3(0.0f, 0.0f, 1.0f));
-}
-
-void Object::scale_object(glm::vec2 scaler){
-   model = glm::scale(model, glm::vec3(scaler.x, scaler.y, 0.0f));
-   size = scaler;
-}
-
-void Object::translate_object(glm::vec2 pos_to){
-   model = glm::translate(model, glm::vec3(pos_to.x, pos_to.y, 0.0f));
-   pos = {pos_to.x - 1.0f, pos_to.y-1.0f, 0.0f};
-   
-}
-void Object::rotate_object(float angle, glm::vec3 pos){
-   model = glm::rotate(model, angle, pos);
-
-}
 void Object::scale_object(glm::mat4 *model, glm::vec2 scaler){
    *model = glm::scale(*model, glm::vec3(scaler.x, scaler.y, 0.0f));
 }
@@ -102,10 +70,7 @@ void Object::rotate_object(glm::mat4 *model, float angle, glm::vec3 pos){
 }
 
 void Object::draw(GLFWwindow* window, glm::mat4 &model, glm::mat4 view){
-   int width = get_window_size(window).width, 
-       height = get_window_size(window).height;
-   float aspect = (float)width/height;
-   glm::mat4 proj = glm::ortho(-aspect, aspect, -1.0f, 1.0f, -1.0f, 1.0f );
+   glm::mat4 proj = get_projection(window);
    if (tex_type != NONE && tex_type != LINES)
       texture.use();
    shader.use();
@@ -119,11 +84,9 @@ void Object::draw(GLFWwindow* window, glm::mat4 &model, glm::mat4 view){
    else
       vertex.draw(GL_TRIANGLES, LEN(indices_square));
 }
+
 void Object::draw(GLFWwindow* window, glm::mat4 &model, glm::mat4 view, glm::vec3 color){
-   int width = get_window_size(window).width, 
-       height = get_window_size(window).height;
-   float aspect = (float)width/height;
-   glm::mat4 proj = glm::ortho(-aspect, aspect, -1.0f, 1.0f, -1.0f, 1.0f );
+   glm::mat4 proj = get_projection(window);
    if (tex_type != NONE && tex_type != LINES)
       texture.use();
    shader.use();
@@ -138,6 +101,15 @@ void Object::draw(GLFWwindow* window, glm::mat4 &model, glm::mat4 view, glm::vec
    else
       vertex.draw(GL_TRIANGLES, LEN(indices_square));
 }
+
+glm::mat4 Object::get_projection(GLFWwindow *window){
+   int width  = get_window_size(window).width, 
+       height = get_window_size(window).height;
+   float aspect = (float)width/height;
+   glm::mat4 proj = glm::ortho(-aspect, aspect, -1.0f, 1.0f, -1.0f, 1.0f);
+   return proj;
+}
+
 /****************************************************/
 /*                   USER                          */
 

@@ -1,6 +1,7 @@
 #ifndef GAME_H
 #define GAME_H
 
+#include "glm/ext/matrix_transform.hpp"
 #include <glm/fwd.hpp>
 #include <glm/ext/matrix_float4x4.hpp>
 #include <glad/glad.h>
@@ -48,9 +49,9 @@ const float data_dot[] = {
 };
 const float data_square[] = {
    // position          texture 
-     0.5f,  0.5f, 0.0f,  1.0f, 1.0f,    // top right
+     0.5f,  0.5f, 0.0f,  1.0f, 1.0f,   // top right
      0.5f, -0.5f, 0.0f,  1.0f, 0.0f,   // bottom right
-    -0.5f, -0.5f, 0.0f,  0.0f, 0.0f,  // bottom left
+    -0.5f, -0.5f, 0.0f,  0.0f, 0.0f,   // bottom left
     -0.5f,  0.5f, 0.0f,  0.0f, 1.0f,   // top left 
 };
 const uint indices_square[] = {
@@ -200,25 +201,35 @@ class Object {
       Object(std::string src_vertex, std::string src_fragment, Image img_type);
       ~Object();
       glm::mat4 model = glm::mat4(1.0f);
-      glm::vec2 size = glm::vec3(0.0f, 0.0f, 0.0f);
+      glm::vec2 size = glm::vec3(1.0f, 1.0f, 0.0f);
       glm::vec3 pos = glm::vec3(0.0f);
       Shader shader;
       Image tex_type;
       Texture texture;
       Vertex vertex;
    public:
+      glm::mat4 get_projection(GLFWwindow *window);
       void add_shaders(std::string src_vertex, std::string src_fragment);
       void add_texture(std::string src_texture, Image img_type);
+    
       void update() { model = glm::mat4(1.0f); }
-      void update(glm::vec3 pos, glm::vec2 scaler, float rotation);
-      void update(glm::vec3 pos, float rotation);
-      void update(glm::vec3 pos, glm::vec2 scaler);
+      
       static void scale_object(glm::mat4 *model, glm::vec2 scaler);
       static void translate_object(glm::mat4 *model, glm::vec2 pos);
       static void rotate_object(glm::mat4 *model, float angle, glm::vec3 pos);
-      void scale_object(glm::vec2 scaler);
-      void translate_object(glm::vec2 pos);
-      void rotate_object(float angle, glm::vec3 pos);
+
+      void scale_object(glm::vec2 scaler){
+         model = glm::scale(model, glm::vec3(scaler.x, scaler.y, 0.2f));
+         this->size = scaler;
+      }
+      void translate_object(glm::vec2 pos){
+         model = glm::translate(model, glm::vec3(pos.x, pos.y, 0.0f));
+         this->pos = {pos.x, pos.y, 0.0f};
+      }
+      void rotate_object(float angle, glm::vec3 pos){
+         model = glm::rotate(model, angle, pos);
+      }
+
       void draw(GLFWwindow *window, glm::mat4 &model, glm::mat4 view);
       void draw(GLFWwindow *window, glm::mat4 &model, glm::mat4 view, glm::vec3 color);
 };
@@ -236,7 +247,8 @@ class Planet: public Object{
 class User: public Object {
    public: 
       int HP = 100, EXP = 0;
-
+      glm::vec2 size = {0.2, 0.2};
+      glm::vec2 pos = {1.0, 1.0};
    public:
       User(std::string src_vertex, std::string src_fragment, std::string src_texture, Image img_type):
       Object(src_vertex, src_fragment, src_texture, img_type){};
