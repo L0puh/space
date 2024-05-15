@@ -17,14 +17,14 @@ Collision_prototype::Collision_prototype(collision_type t, object_type x, object
    obj2.add_texture("", LINES);
 }
 
-bool AABB_collision(collider obj, collider obj2){
-   glm::vec2 box1, box2;
-   float minx = obj.pos.x, miny = obj.pos.y;
-   float minx2 = obj2.pos.x, miny2 = obj2.pos.y;
-   float maxx = obj.pos.x + obj.size.x, maxy = obj.pos.y + obj.size.y;
-   float maxx2 = obj2.pos.x + obj2.size.x, maxy2 = obj2.pos.y + obj2.size.y;
 
-   return maxx > minx2 && minx < maxx2 && maxy > miny2 && miny < maxy2;
+bool AABB_collision(collider obj, collider obj2){
+   bool x = obj.pos.x + obj.size.x/2 <= obj2.pos.x - obj2.size.x/2 || 
+            obj.pos.x - obj.size.x/2 >= obj2.pos.x + obj2.size.x/2;
+
+   bool y = obj.pos.y + obj.size.y/2 <= obj2.pos.y - obj2.size.y/2 || 
+            obj.pos.y - obj.size.y/2 >= obj2.pos.y + obj2.size.y/2;
+   return x || y;
 }
 
 bool circle_collision(collider obj, collider obj2){
@@ -46,11 +46,11 @@ void Collision_prototype::update_prototype(GLFWwindow* window, collider *c1, col
       glfwSetKeyCallback(window, Input::key_callback);
       
       c1->pos = Input::get_mouse_pos(window);
-      c1->size = {0.3f, 0.3f};
+      c1->size = {0.1f, 0.2f};
       c1->radius = c1->size.x/sqr_2;
 
       c2->pos = {0.0f, 0.0f};
-      c2->size = {0.3f, 0.3f};
+      c2->size = {0.2f, 0.2f};
       c2->radius = 1.0f;
 
       obj1.update();

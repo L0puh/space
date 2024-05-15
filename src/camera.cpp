@@ -21,8 +21,7 @@ bool Camera::check_boarder(glm::vec2 map_size, glm::vec2 user_size, float x, flo
 
 bool Camera::check_collisions(std::vector<collider> objs, glm::vec2 user_size, glm::vec2 pos){
    for (const auto& obj: objs){
-      /* if (AABB_collision(obj, {pos, user_size, 2.0f})) */ 
-      if (circle_collision(obj, {pos, user_size, 0.5f}))
+      if (!AABB_collision(obj, {pos, user_size, 2.0f})) 
          return true;
    }
    return false;
