@@ -6,7 +6,7 @@
 #include <vector>
 
 #define DEBUG_MODE
-/* #define COLLISION_PROTOTYPE */
+#define COLLISION_PROTOTYPE
 
 
 int main() {
@@ -29,8 +29,8 @@ int main() {
 
 #ifdef COLLISION_PROTOTYPE
    collider c1, c2;
-   Collision_prototype coll_p(Collision_prototype::AABB_AABB, object_type::circle, object_type::square);
-   /* Collision_prototype coll_p(Collision_prototype::AABB_AABB, square, square); */
+   /* Collision_prototype coll_p(Collision_prototype::AABB_AABB, object_type::circle, object_type::square); */
+   Collision_prototype coll_p(Collision_prototype::AABB_AABB, square, square);
    coll_p.update_prototype(window, &c1, &c2);
 #endif
 
