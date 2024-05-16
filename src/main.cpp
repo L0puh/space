@@ -6,7 +6,7 @@
 #include <vector>
 
 #define DEBUG_MODE
-/* #define COLLISION_PROTOTYPE */
+#define COLLISION_PROTOTYPE
 
 
 int main() {

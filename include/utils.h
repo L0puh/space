@@ -1,6 +1,7 @@
 #ifndef DEBUG_CONSOLE_H
 #define DEBUG_CONSOLE_H
 
+#include "collision.h"
 #include "game.h"
 #include <imgui/imgui.h>
 #include <imgui/imgui_impl_glfw.h>
@@ -11,6 +12,8 @@
 #include <GLFW/glfw3.h>
 #include <string>
 
+struct collider;
+class Collision_prototype;
 
 namespace utils{
    inline void log(std::string a){
@@ -29,6 +32,7 @@ namespace utils{
    void debug_console(GLFWwindow *window, User *user, Camera *camera);
    void debug_new_frame();
    void debug_console_render();
+   void debug_console(GLFWwindow *window, collider*, collider*, Collision_prototype::collision_type*);
 };
 
 
