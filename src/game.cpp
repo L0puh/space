@@ -86,6 +86,9 @@ namespace Input {
       }
    }
 
+   bool is_relesed(GLFWwindow* window, int key){
+      return glfwGetKey(window, key) == GLFW_RELEASE;
+   }
    bool is_pressed(GLFWwindow* window, int key){
       return glfwGetKey(window, key) == GLFW_PRESS;
    }

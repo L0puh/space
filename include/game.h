@@ -12,6 +12,7 @@
 
 #define LEN(n) sizeof(n)/sizeof(n[0])
 
+
 struct collider;
 class Object;
 class Planet;
@@ -64,6 +65,7 @@ const uint indices_square[] = {
 /*                      COLORS                           */
 
 const glm::vec3 red = {1.0f, 0.0f, 0.0f};
+const glm::vec3 white = {1.0f, 1.0f, 1.0f};
 const glm::vec3 blue = {0.0f, 0.0f, 1.0f};
 const glm::vec3 black = {0.0f, 0.0f, 0.0f};
 const glm::vec3 grey = {0.13f, 0.186f, 0.176f};
@@ -143,6 +145,7 @@ class Vertex{
 namespace Input {
    void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
    bool is_pressed(GLFWwindow* window, int key);
+   bool is_relesed(GLFWwindow* window, int key);
    glm::vec2 get_mouse_pos(GLFWwindow *window);
 };   
 

@@ -42,8 +42,7 @@ void Camera::get_movement(GLFWwindow* window,
       float x=pos.x,y=pos.y;
       x += -sin(rotation) * speed * deltatime;
       y += cos(rotation) * speed * deltatime;
-      if (check_boarder(map_size, user_size, x, y)||
-          check_collisions(objs, user_size, {x, y})) {
+      if (check_collisions(objs, user_size, {x, y})) {
          rotation-=speed*deltatime;
       } else 
          pos = {x, y, pos.z};
@@ -52,7 +51,7 @@ void Camera::get_movement(GLFWwindow* window,
       float x = pos.x, y = pos.y;
       x -= -sin(rotation) * speed * deltatime;
       y -= cos(rotation) * speed * deltatime;
-      if (check_boarder(map_size, user_size, x, y) || check_collisions(objs, user_size, {x,y}))
+      if (check_collisions(objs, user_size, {x,y}))
          rotation+=speed*deltatime;
       else
          pos.x = x; pos.y = y;
