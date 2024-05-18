@@ -28,11 +28,11 @@ namespace utils{
    inline void error(std::string a, std::string b){
       printf("[!]: %s: %s\n",a.c_str(), b.c_str());
    }
-   void init_debug_console(GLFWwindow *window);
-   void debug_console(GLFWwindow *window, User *user, Camera *camera);
+   void init_debug_console();
+   void debug_console();
    void debug_new_frame();
    void debug_console_render();
-   void debug_console(GLFWwindow *window, collider*, collider*, Collision_prototype::collision_type*);
+   void debug_console(collider*, collider*, Collision_prototype::collision_type*);
 };
 
 

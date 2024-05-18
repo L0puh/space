@@ -39,9 +39,9 @@ float get_deltatime(float *last_time){
    *last_time= time;
    return deltatime;
 }
-void shut_down(GLFWwindow *window){
+void shut_down(){
    utils::log("shut down");
-   glfwDestroyWindow(window);
+   glfwDestroyWindow(global_states.window);
    glfwTerminate();
 }
 
@@ -86,20 +86,51 @@ namespace Input {
       }
    }
 
-   bool is_relesed(GLFWwindow* window, int key){
-      return glfwGetKey(window, key) == GLFW_RELEASE;
+   bool is_relesed(int key){
+      return glfwGetKey(global_states.window, key) == GLFW_RELEASE;
    }
-   bool is_pressed(GLFWwindow* window, int key){
-      return glfwGetKey(window, key) == GLFW_PRESS;
+   bool is_pressed(int key){
+      return glfwGetKey(global_states.window, key) == GLFW_PRESS;
    }
-   glm::vec2 get_mouse_pos(GLFWwindow *window){
-      window_size sz;
-      float w, h;
+   glm::vec2 get_mouse_pos(){
       double x,y;
-      sz = get_window_size(window);
-      glfwGetCursorPos(window, &x, &y);
-      x = 2*(x/sz.width)-1;
-      y = -2*(y/sz.height)+1;
+      glfwGetCursorPos(global_states.window, &x, &y);
+      x = 2*(x/global_states.w_size.width)-1;
+      y = -2*(y/global_states.w_size.height)+1;
       return {x, y};
    }
 };
+
+void generate_stars(Object &star, float amount){
+   boarder cur_boarder = global_states.cur_boarder;
+   glm::vec2 pos = global_states.camera->pos;
+   float map_offset = global_states.camera->map_offset;
+
+   if (pos.y+1.0f >= cur_boarder.max_y || pos.x+1.0f >= cur_boarder.max_x) {
+      cur_boarder.prev_x = cur_boarder.max_x;
+      cur_boarder.prev_y = cur_boarder.max_y;
+      cur_boarder.max_y = pos.y+map_offset;
+      cur_boarder.min_x = pos.x-map_offset;
+      cur_boarder.max_x = pos.x+map_offset;
+      cur_boarder.min_y = pos.y-map_offset;
+   }
+   if (pos.y-1.0f <= cur_boarder.min_y || pos.x-1.0f <= cur_boarder.min_x) {
+      cur_boarder.max_y = pos.y-map_offset;
+      cur_boarder.min_x = pos.x+map_offset;
+      cur_boarder.max_x = pos.x-map_offset;
+      cur_boarder.min_y = pos.y+map_offset;
+   }
+   srand(1000);
+   for ( float i=cur_boarder.min_x; i <= cur_boarder.max_x; i+=amount){
+      for (float j=cur_boarder.min_y; j <= cur_boarder.max_y; j+=amount){
+         bool is_star = rand() % 256 < 32;
+         if (is_star) {
+            star.update();
+            star.translate_object(glm::vec2(i, j));
+            star.draw(star.model, global_states.camera->view, white);
+         }
+      }
+   }
+   global_states.cur_boarder = cur_boarder;
+}
+

@@ -3,11 +3,11 @@
 #include "imgui/imgui.h"
 
 namespace utils {
-   void init_debug_console(GLFWwindow *window){
+   void init_debug_console(){
       ImGui::CreateContext();
       ImGuiIO& IO = ImGui::GetIO();
       ImGui::StyleColorsDark();
-      ImGui_ImplGlfw_InitForOpenGL(window, true);
+      ImGui_ImplGlfw_InitForOpenGL(global_states.window, true);
       ImGui_ImplOpenGL3_Init();
    }
    void debug_new_frame(){
@@ -19,7 +19,9 @@ namespace utils {
       ImGui::Render();
       ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
    }
-   void debug_console(GLFWwindow* window, User *user, Camera *camera){
+   void debug_console(){
+      Camera *camera = global_states.camera;
+      User *user = global_states.user;
       ImGui::Begin("console", 0, ImGuiWindowFlags_AlwaysAutoResize);
       {
          ImGui::Text("USER:");
@@ -37,9 +39,11 @@ namespace utils {
          ImGui::SliderInt("HP", &user->HP, 0, 100, "%d", 0);
          ImGui::SliderInt("EXP", &user->EXP, 0, 100, "%d", 0);
       }
+      global_states.camera = camera;
+      global_states.user   = user;
       ImGui::End();
    }
-   void debug_console(GLFWwindow* window, collider* c1, collider* c2, Collision_prototype::collision_type *type){
+   void debug_console(collider* c1, collider* c2, Collision_prototype::collision_type *type){
       ImGui::Begin("console", 0, ImGuiWindowFlags_AlwaysAutoResize);
       {
          ImGui::Text("collider 1");

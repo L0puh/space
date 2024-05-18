@@ -13,12 +13,6 @@ void Camera::update(){
    view = glm::inverse(view);
 }
 
-bool Camera::check_boarder(glm::vec2 map_size, glm::vec2 user_size, float x, float y){
-   bool pos = (x-user_size.x >= (map_size.x-map_offset)/2 || y-user_size.y >= (map_size.y-map_offset)/2);
-   bool neg = (-x-user_size.x >= (map_size.x-map_offset)/2 || -y-user_size.y >= (map_size.y-map_offset)/2);
-   return pos || neg;
-}
-
 bool Camera::check_collisions(std::vector<collider> objs, glm::vec2 user_size, glm::vec2 pos){
    for (const auto& obj: objs){
       if (!AABB_collision(obj, {pos, user_size, 2.0f})) 
@@ -27,18 +21,14 @@ bool Camera::check_collisions(std::vector<collider> objs, glm::vec2 user_size, g
    return false;
 }
 
-void Camera::get_movement(GLFWwindow* window, 
-      float deltatime, 
-      glm::vec2 map_size, 
-      glm::vec2 user_size,
-      std::vector<collider> objs) {
-   if (Input::is_pressed(window, GLFW_KEY_A)){
+void Camera::get_movement( float deltatime, glm::vec2 user_size, std::vector<collider> objs) {
+   if (Input::is_pressed(GLFW_KEY_A)){
       rotation += speed * deltatime;
    } 
-   if (Input::is_pressed(window, GLFW_KEY_D)){
+   if (Input::is_pressed(GLFW_KEY_D)){
        rotation -= speed * deltatime;
    }
-   if (Input::is_pressed(window, GLFW_KEY_W)){
+   if (Input::is_pressed(GLFW_KEY_W)){
       float x=pos.x,y=pos.y;
       x += -sin(rotation) * speed * deltatime;
       y += cos(rotation) * speed * deltatime;
@@ -47,7 +37,7 @@ void Camera::get_movement(GLFWwindow* window,
       } else 
          pos = {x, y, pos.z};
    }
-   if (Input::is_pressed(window, GLFW_KEY_S)){
+   if (Input::is_pressed(GLFW_KEY_S)){
       float x = pos.x, y = pos.y;
       x -= -sin(rotation) * speed * deltatime;
       y -= cos(rotation) * speed * deltatime;

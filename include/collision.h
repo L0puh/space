@@ -11,6 +11,8 @@ playground with different types of collisions
 
 #include "game.h"
 
+extern global global_states;
+
 struct collider{
       glm::vec2 pos;
       glm::vec2 size;
@@ -34,7 +36,7 @@ class Collision_prototype {
       Collision_prototype(collision_type t, object_type x, object_type y);
    public:
       bool run_prototype(collider, collider);
-      void update_prototype(GLFWwindow* window, collider *c1, collider *c2);
+      void update_prototype(collider *c1, collider *c2);
 };
 
 #endif 

@@ -12,7 +12,6 @@
 
 #define LEN(n) sizeof(n)/sizeof(n[0])
 
-
 struct collider;
 class Object;
 class Planet;
@@ -26,6 +25,15 @@ class Camera;
 enum object_type {
    circle,
    square
+};
+
+struct boarder {
+   float max_x = 3.0f;
+   float min_x = -3.0f;
+   float max_y = 3.0f;
+   float min_y = -3.0f;
+   float prev_x = 3.0f;
+   float prev_y = 3.0f;
 };
 
 /*********************************************************/
@@ -79,6 +87,16 @@ struct window_size {
    int height;
 };
 
+struct global {
+   GLFWwindow* window;
+   window_size w_size;
+   Camera* camera;
+   User* user;
+   boarder cur_boarder;
+};
+
+extern global global_states;
+
 inline window_size get_window_size(GLFWwindow *window){
    int width, height;
    glfwGetFramebufferSize(window, &width, &height);
@@ -86,13 +104,15 @@ inline window_size get_window_size(GLFWwindow *window){
 }
 
 GLFWwindow* init_window(const int width, const int height);
-void shut_down(GLFWwindow *window);
+void shut_down();
 void set_debug_mode();
 void frame_buffer_size(GLFWwindow *window, int width, int height);
 std::string load_from_file(const std::string& src);
 float get_deltatime(float *last_time);
 void GLAPIENTRY message_callback(GLenum src, GLenum type, GLuint id, GLuint severity,
                                  GLsizei len, const GLchar* msg, const GLvoid* param);
+
+void generate_stars(Object &star, float amount);
 
 class Shader {
    public:
@@ -144,9 +164,9 @@ class Vertex{
 
 namespace Input {
    void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
-   bool is_pressed(GLFWwindow* window, int key);
-   bool is_relesed(GLFWwindow* window, int key);
-   glm::vec2 get_mouse_pos(GLFWwindow *window);
+   bool is_pressed(int key);
+   bool is_relesed(int key);
+   glm::vec2 get_mouse_pos();
 };   
 
 enum Image {
@@ -181,14 +201,10 @@ class Camera {
       float map_offset = 2.8f;
       glm::vec3 pos = glm::vec3(0.0f); 
       glm::mat4 view = glm::mat4(1.0f);
-      GLFWwindow *window;
    public: 
       void update();
-      void set_window(GLFWwindow *win) {window = win;}
       void set_position(glm::vec3 camera_pos) { pos = camera_pos; }
-      bool check_boarder(glm::vec2 map_size, glm::vec2 user_size, float x, float y);
-      void get_movement(GLFWwindow* window, float deltatime, 
-            glm::vec2 map_sz, glm::vec2 user_sz, std::vector<collider>);
+      void get_movement(float deltatime, glm::vec2 user_sz, std::vector<collider>);
       bool check_collisions(std::vector<collider> objs, glm::vec2 user_size, glm::vec2 pos);
       //void zoom(float x); TODO
 };
@@ -211,7 +227,7 @@ class Object {
       Texture texture;
       Vertex vertex;
    public:
-      glm::mat4 get_projection(GLFWwindow *window);
+      glm::mat4 get_projection();
       void add_shaders(std::string src_vertex, std::string src_fragment);
       void add_texture(std::string src_texture, Image img_type);
     
@@ -233,8 +249,8 @@ class Object {
          model = glm::rotate(model, angle, pos);
       }
 
-      void draw(GLFWwindow *window, glm::mat4 &model, glm::mat4 view);
-      void draw(GLFWwindow *window, glm::mat4 &model, glm::mat4 view, glm::vec3 color);
+      void draw(glm::mat4 &model, glm::mat4 view);
+      void draw(glm::mat4 &model, glm::mat4 view, glm::vec3 color);
 };
 
 class Planet: public Object{

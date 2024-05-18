@@ -1,5 +1,4 @@
 #include "collision.h"
-#include "game.h"
 #include "glm/common.hpp"
 #include "glm/geometric.hpp"
 #include "utils.h"
@@ -41,21 +40,21 @@ bool circle_collision(collider obj, collider obj2){
    return glm::length(difference) < obj.radius;
 }
 
-void Collision_prototype::update_prototype(GLFWwindow* window, collider *c1, collider *c2){
+void Collision_prototype::update_prototype(collider *c1, collider *c2){
    c1->size = {0.2f, 0.2f};
 
    c2->pos = {0.0f, 0.0f};
    c2->size = {0.2f, 0.2f};
    c2->radius = 1.0f;
-   while (!glfwWindowShouldClose(window)){
+   while (!glfwWindowShouldClose(global_states.window)){
       utils::debug_new_frame();
       glClearBufferfv(GL_COLOR, 0, bg);
-      glfwSetKeyCallback(window, Input::key_callback);
+      glfwSetKeyCallback(global_states.window, Input::key_callback);
       
-      c1->pos = Input::get_mouse_pos(window);
+      c1->pos = Input::get_mouse_pos();
       c1->radius = c1->size.x/sqr_2;
 
-      utils::debug_console(window, c1, c2, &type);
+      utils::debug_console(c1, c2, &type);
       obj1.update();
       obj1.translate_object(c1->pos);
       obj1.scale_object(c1->size);
@@ -65,14 +64,14 @@ void Collision_prototype::update_prototype(GLFWwindow* window, collider *c1, col
       obj2.scale_object(c2->size);
       
 
-      obj1.draw(window, obj1.model, glm::mat4(1.0f), blue);
+      obj1.draw(obj1.model, glm::mat4(1.0f), blue);
       if (run_prototype(*c1, *c2)){
-         obj2.draw(window, obj2.model, glm::mat4(1.0f), red);
+         obj2.draw(obj2.model, glm::mat4(1.0f), red);
       } else 
-         obj2.draw(window, obj2.model, glm::mat4(1.0f), blue);
+         obj2.draw(obj2.model, glm::mat4(1.0f), blue);
 
       utils::debug_console_render();
-      glfwSwapBuffers(window);
+      glfwSwapBuffers(global_states.window);
       glfwPollEvents();
    }
 }
