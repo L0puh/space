@@ -1,6 +1,7 @@
-#include "utils.h"
 #include "collision.h"
+#include "utils.h"
 #include "imgui/imgui.h"
+#include "state.h"
 
 namespace utils {
    void init_debug_console(){
@@ -49,30 +50,18 @@ namespace utils {
          ImGui::Text("collider 1");
          ImGui::SliderFloat("scale: x", &c1->size.x, 0, 2.0f, "%.4f", 0);
          ImGui::SliderFloat("scale: y", &c1->size.y, 0, 2.0f, "%.4f", 0);
-         float scale = c1->size.x;
-         ImGui::SliderFloat("scale: both", &scale, 0, 2.0f, "%.4f", 0);
-         c1->size = {scale, scale};
          ImGui::SliderFloat("pos: x", &c1->pos.x, 0, 2.0f, "%.4f", 0); ImGui::SameLine();
          ImGui::SliderFloat("pos: y", &c1->pos.y, 0, 2.0f, "%.4f", 0);
          ImGui::Separator();
          ImGui::Text("collider 2");
          
-         scale = c2->size.x;
-         ImGui::SliderFloat("scale: x", &c2->size.x, 0, 2.0f, "%.4f", 0);
-         ImGui::SliderFloat("scale: y", &c2->size.y, 0, 2.0f, "%.4f", 0);
-         ImGui::SliderFloat("scale: both", &scale, 0, 2.0f, "%.4f", 0);
-         c2->size = {scale, scale};
-         ImGui::SliderFloat("pos: x", &c2->pos.x, 0, 2.0f, "%.4f", 0); ImGui::SameLine();
-         ImGui::SliderFloat("pos: y", &c2->pos.y, 0, 2.0f, "%.4f", 0);
-         bool AABB_AABB=0, circle_AABB; //FIXME: keep state, create global state 
-         ImGui::Checkbox("AABBvsAABB", &AABB_AABB);
-         if (AABB_AABB) {
-            circle_AABB = 0;
-            *type = Collision_prototype::AABB_AABB;
-         } else {
-            circle_AABB = 1;
-            *type = Collision_prototype::AABB_circle;
-         }
+         ImGui::SliderFloat("2. scale: x", &c2->size.x, 0, 2.0f, "%.4f", 0);
+         ImGui::SliderFloat("2. scale: y", &c2->size.y, 0, 2.0f, "%.4f", 0);
+         ImGui::SliderFloat("2. pos: x", &c2->pos.x, 0, 2.0f, "%.4f", 0); ImGui::SameLine();
+         ImGui::SliderFloat("2. pos: y", &c2->pos.y, 0, 2.0f, "%.4f", 0);
+         bool circle_AABB, AABB_AABB; 
+         ImGui::Checkbox("AABBvsAABB", &global_states.collision_type.AABB_AABB);
+         global_states.collision_type.circle_AABB = global_states.collision_type.AABB_AABB ? 0: 1;
       }
       ImGui::End();
    }

@@ -1,4 +1,5 @@
 #include "game.h"
+#include "state.h"
 #include <GLFW/glfw3.h>
 #include <fstream>
 #include <sstream>
@@ -48,6 +49,7 @@ void shut_down(){
 void frame_buffer_size(GLFWwindow *window, int width, int height){
    utils::log("changed view port");
    glViewport(0, 0, width, height);
+   global_states.w_size = {width, height};
 }
 
 

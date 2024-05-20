@@ -1,4 +1,5 @@
 #include "game.h" 
+#include "state.h"
 #include "collision.h"
 #include "utils.h"
 
@@ -6,7 +7,8 @@
 #include <vector>
 
 #define DEBUG_MODE
-/* #define COLLISION_PROTOTYPE */
+#define COLLISION_PROTOTYPE
+
 
 global global_states;
 
@@ -14,6 +16,7 @@ int main() {
    const float width = 400, height = 400;
    GLFWwindow *window = init_window(width, height);
    global_states.window = window;
+   global_states.w_size = {(int)width, (int)height};
 
    glEnable(GL_BLEND); // transparent bg for textures (RBGA)
    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -30,9 +33,8 @@ int main() {
    Object star("../shaders/standard.vert", "../shaders/standard.frag", NONE);
 
 #ifdef COLLISION_PROTOTYPE
-   collider c1, c2;
    Collision_prototype coll_p(Collision_prototype::AABB_AABB, square, square);
-   coll_p.update_prototype(window, &c1, &c2);
+   coll_p.update_prototype();
 #endif
 
    Camera camera;

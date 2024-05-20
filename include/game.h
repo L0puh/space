@@ -87,15 +87,6 @@ struct window_size {
    int height;
 };
 
-struct global {
-   GLFWwindow* window;
-   window_size w_size;
-   Camera* camera;
-   User* user;
-   boarder cur_boarder;
-};
-
-extern global global_states;
 
 inline window_size get_window_size(GLFWwindow *window){
    int width, height;
