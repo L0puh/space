@@ -7,8 +7,7 @@
 #include <vector>
 
 #define DEBUG_MODE
-#define COLLISION_PROTOTYPE
-
+/* #define COLLISION_PROTOTYPE */
 
 global global_states;
 
@@ -76,7 +75,8 @@ int main() {
       utils::debug_console();
 
       //objects.draw(); 
-      generate_stars(star, 0.15);
+      generate_objs(planet, 1, circle);
+      generate_objs(star, 0.14, dot);
       planet.draw(planet.model, camera.view);
       user.draw(user.model, camera.view);
      

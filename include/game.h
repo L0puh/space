@@ -24,7 +24,8 @@ class Camera;
 
 enum object_type {
    circle,
-   square
+   square,
+   dot
 };
 
 struct boarder {
@@ -103,7 +104,8 @@ float get_deltatime(float *last_time);
 void GLAPIENTRY message_callback(GLenum src, GLenum type, GLuint id, GLuint severity,
                                  GLsizei len, const GLchar* msg, const GLvoid* param);
 
-void generate_stars(Object &star, float amount);
+void generate_objs(Object &obj, float amount, object_type type);
+/* void generate_planets(Planet &planet, float amount); */
 
 class Shader {
    public:
