@@ -104,8 +104,10 @@ float get_deltatime(float *last_time);
 void GLAPIENTRY message_callback(GLenum src, GLenum type, GLuint id, GLuint severity,
                                  GLsizei len, const GLchar* msg, const GLvoid* param);
 
-void generate_objs(Object &obj, float amount, object_type type);
-/* void generate_planets(Planet &planet, float amount); */
+namespace Map{
+   boarder set_boarders(glm::vec2);
+   void generate_objs(Object &obj, float amount, object_type type);
+};
 
 class Shader {
    public:

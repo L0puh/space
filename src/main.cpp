@@ -75,8 +75,8 @@ int main() {
       utils::debug_console();
 
       //objects.draw(); 
-      generate_objs(planet, 1, circle);
-      generate_objs(star, 0.14, dot);
+      Map::generate_objs(planet, 0.6, circle);
+      Map::generate_objs(star, 0.1, dot);
       planet.draw(planet.model, camera.view);
       user.draw(user.model, camera.view);
      
