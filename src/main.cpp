@@ -2,12 +2,14 @@
 #include "state.h"
 #include "collision.h"
 #include "utils.h"
+#include "orbit.h"
 
 #include <GLFW/glfw3.h>
 #include <vector>
 
 #define DEBUG_MODE
 /* #define COLLISION_PROTOTYPE */
+#define ORBIT_PROTOTYPE
 
 global global_states;
 
@@ -35,7 +37,9 @@ int main() {
    Collision_prototype coll_p(Collision_prototype::AABB_AABB, square, square);
    coll_p.update_prototype();
 #endif
-
+#ifdef ORBIT_PROTOTYPE
+   run_orbit_prototype();
+#endif
    Camera camera;
    camera.set_position({1.0f, 1.0f, 0.0f});
    user.pos = camera.pos;
@@ -50,7 +54,8 @@ int main() {
    global_states.window = window;
    global_states.w_size = get_window_size(window);
 
-#ifndef COLLISION_PROTOTYPE
+#ifndef COLLISION_PROTOTYPE 
+#ifndef ORBIT_PROTOTYPE
    while (!glfwWindowShouldClose(window)){
       deltatime = get_deltatime(&last_frame); 
       glfwSetKeyCallback(window, Input::key_callback);
@@ -88,6 +93,7 @@ int main() {
       global_states.window = window;
       global_states.w_size = get_window_size(window);
    }
+#endif 
 #endif 
    shut_down();
    return 0;

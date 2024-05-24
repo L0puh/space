@@ -252,10 +252,16 @@ class Planet: public Object{
    public:
       Planet(std::string src_vertex, std::string src_fragment, std::string src_texture, Image img_type, float p_radius): 
          Object(src_vertex, src_fragment, src_texture, img_type){ radius = p_radius;}
-    public:
+   public:
       uint ID;
       float radius;
+      float mass;
+      glm::vec2 velocity;
+      float distance_to_center = 0;
+   public: 
 
+
+      
 };
 
 class User: public Object {
