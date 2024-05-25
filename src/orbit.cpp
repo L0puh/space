@@ -1,69 +1,58 @@
 #include "orbit.h"
 #include "state.h"
 #include "utils.h"
+#include <GLFW/glfw3.h>
 #include <cmath>
+#include <vector>
 
-const float G = 5.0f;
-const float timestep = 0.0000005f;
+const float timestep = 0.5f;
 
 void update_plantes(planet_objects *p, planet_objects planets[], size_t amount){
-   float total_force_x, total_force_y;
-   total_force_x = total_force_y = 0;
-
-   float dx, dy, g, ang;
-   for (int i = 0; i < amount; i++){
-      if (p->pos == planets[i].pos) continue;
-      planet_objects p2 = planets[i];
-      dx = p2.pos.x - p->pos.x;
-      dy = p->pos.y - p2.pos.y;
-      printf("posx: %.4f posy: %.4f\n", p2.pos.x, p2.pos.y);
-      printf("posx: %.4f posy: %.4f\n", p->pos.x, p->pos.y);
-      g = G * p2.mass / (dx * dx + dy * dy);
-      ang = atan2(dx, dy);
-      total_force_x +=  g * cos(ang);
-      total_force_y += -g * sin(ang);
-      printf("dx: %.4f dy: %.4f ang : %.4f\n", dx, dy, ang);
-   }
-   p->velocity.x += total_force_x * timestep;
-   p->velocity.y += total_force_y * timestep;
-
-   p->pos.x += p->velocity.x * timestep;
-   p->pos.y += p->velocity.y * timestep;
-
-   //FIXME:
-   if (std::abs(p->pos.x) >= 1.0f){
-      p->pos.x = 0.3f;
-   }
-   if (std::abs(p->pos.y) >= 1.0f){
-      p->pos.y = 0.3f;
-   }
+   p->pos.x = sin(glfwGetTime()*timestep)/ p->mass * p->velocity.y;
+   p->pos.y = cos(glfwGetTime()*timestep)/ p->mass * p->velocity.x;
+   p->orbit.push_back(p->pos);
 }
 
-void draw_planets(planet_objects planets[], size_t amount, Planet *planet){
+void draw_planets(planet_objects planets[], size_t amount, Planet *planet, Object *dot){
    for (int i=0; i < amount; i++){
       planet->update();
       planet->translate_object(planets[i].pos);
       planet->scale_object(planets[i].size);
       planet->draw(planet->model, glm::mat4(1.0f));
+      draw_orbit(planets[i].orbit, dot);
+   }
+}
+
+void draw_orbit(std::vector<glm::vec2> orbit, Object *dot){
+   for (int i = 0; i < orbit.size(); i++){
+      dot->update();
+      dot->translate_object(orbit[i]);
+      dot->draw(dot->model, glm::mat4(1.0f), red);
    }
 }
 
 void run_orbit_prototype(){
    Planet planet("../shaders/user.vert", "../shaders/user.frag", 
                   "../textures/planet.png", PNG, 5.0f);
+   Object dot("../shaders/standard.vert", "../shaders/standard.frag", Image::NONE); 
+   int amount_planets = 4;
+   planet_objects planets[amount_planets];
 
-   planet_objects planets[2];
-   planets[0] = {50.0f, {0.1f, 0.1f}, {0.2f, 0.2f}, 5.2f, {0.2, 0.2}, 0.0f};
-   planets[1] = {10.0f, {0.1f, 0.1f}, {1.5f, 1.5f}, 4.2f, {0.1, 0.1}, 1.0f};
+   planets[0] = {50.0f, {0.0f, 0.0f}, {0.2f, 0.2f}, 5.2f, {0.2, 0.2}, 0.0f};
+   planets[1] = {10.0f, {0.4f, 0.4f}, {2.0f, 2.0f}, 4.2f, {0.1, 0.1}, 1.0f};
+   planets[2] = {30.0f, {0.8f, 0.8f}, {-3.0f, -3.0f}, 4.2f, {0.2, 0.2}, 1.0f};
+   planets[3] = {39.0f, {0.9f, 0.9f}, {4.0f, -5.0f}, 4.2f, {0.2, 0.2}, 1.0f};
 
    while (!glfwWindowShouldClose(global_states.window)){
       utils::debug_new_frame();
       glClearBufferfv(GL_COLOR, 0, bg);
       glfwSetKeyCallback(global_states.window, Input::key_callback);
+  
+      for (int i = 1; i < amount_planets; i++){
+         update_plantes(&planets[i], planets, sizeof(planets));
+      }
+      draw_planets(planets, amount_planets, &planet, &dot);
 
-      update_plantes(&planets[1], planets, sizeof(planets));
-
-      draw_planets(planets, sizeof(planets), &planet);
 
       utils::debug_console_render();
       glfwSwapBuffers(global_states.window);

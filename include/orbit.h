@@ -15,9 +15,11 @@ struct planet_objects{
    float mass;
    glm::vec2 size;
    float distance_to_center;
+   std::vector<glm::vec2> orbit;
 };
 
-void draw_planets(planet_objects planets[], size_t amount, Planet *planet);
+void draw_planets(planet_objects planets[], size_t amount, Planet *planet, Object *dot);
+void draw_orbit(std::vector<glm::vec2> orbit, Object *dot);
 void run_orbit_prototype();
 
 
