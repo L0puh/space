@@ -1,16 +1,24 @@
 #include "orbit.h"
 #include "state.h"
+#include "collision.h"
 #include "utils.h"
 #include <GLFW/glfw3.h>
 #include <cmath>
 #include <vector>
 
-const float timestep = 0.5f;
 
 void update_plantes(planet_objects *p, planet_objects planets[], size_t amount){
-   p->pos.x = sin(glfwGetTime()*timestep)/ p->mass * p->velocity.y;
-   p->pos.y = cos(glfwGetTime()*timestep)/ p->mass * p->velocity.x;
+   p->pos.x = sin(glfwGetTime()*global_states.timestep)/ p->mass * p->velocity.y;
+   p->pos.y = cos(glfwGetTime()*global_states.timestep)/ p->mass * p->velocity.x;
    p->orbit.push_back(p->pos);
+}
+
+bool check_collisions(planet_objects planets[], collider user, size_t amount){
+   for (int i=0; i < amount; i++){
+      if (circle_collision({planets[i].pos, planets[i].size, planets[i].radius}, user))
+            return true;
+   }
+   return false;
 }
 
 void draw_planets(planet_objects planets[], size_t amount, Planet *planet, Object *dot){
@@ -18,7 +26,7 @@ void draw_planets(planet_objects planets[], size_t amount, Planet *planet, Objec
       planet->update();
       planet->translate_object(planets[i].pos);
       planet->scale_object(planets[i].size);
-      planet->draw(planet->model, glm::mat4(1.0f));
+      planet->draw(planet->model, global_states.camera->view);
       draw_orbit(planets[i].orbit, dot);
    }
 }
@@ -27,7 +35,7 @@ void draw_orbit(std::vector<glm::vec2> orbit, Object *dot){
    for (int i = 0; i < orbit.size(); i++){
       dot->update();
       dot->translate_object(orbit[i]);
-      dot->draw(dot->model, glm::mat4(1.0f), red);
+      dot->draw(dot->model, global_states.camera->view, red);
    }
 }
 
@@ -45,7 +53,7 @@ void run_orbit_prototype(){
 
    while (!glfwWindowShouldClose(global_states.window)){
       utils::debug_new_frame();
-      glClearBufferfv(GL_COLOR, 0, bg);
+      glClearBufferfv(GL_COLOR, 0, bg_color);
       glfwSetKeyCallback(global_states.window, Input::key_callback);
   
       for (int i = 1; i < amount_planets; i++){

@@ -14,6 +14,8 @@ struct global {
       bool circle_AABB;
    };
    collision collision_type;
+   float zoom = 1.0f;
+   float timestep = 0.5f;
 };
 
 extern global global_states;

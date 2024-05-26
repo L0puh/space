@@ -78,7 +78,7 @@ const glm::vec3 white = {1.0f, 1.0f, 1.0f};
 const glm::vec3 blue = {0.0f, 0.0f, 1.0f};
 const glm::vec3 black = {0.0f, 0.0f, 0.0f};
 const glm::vec3 grey = {0.13f, 0.186f, 0.176f};
-const GLfloat bg[] = {0.07f, 0.08f, 0.08f, 1.0f};
+const GLfloat bg_color[] = {0.07f, 0.08f, 0.08f, 1.0f};
 
 /*********************************************************/
 /*                      ENGINE                           */
@@ -222,7 +222,7 @@ class Object {
       Texture texture;
       Vertex vertex;
    public:
-      glm::mat4 get_projection();
+      glm::mat4 get_projection(float zoom);
       void add_shaders(std::string src_vertex, std::string src_fragment);
       void add_texture(std::string src_texture, Image img_type);
     

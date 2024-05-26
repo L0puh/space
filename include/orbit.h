@@ -20,6 +20,8 @@ struct planet_objects{
 
 void draw_planets(planet_objects planets[], size_t amount, Planet *planet, Object *dot);
 void draw_orbit(std::vector<glm::vec2> orbit, Object *dot);
+void update_plantes(planet_objects *p, planet_objects planets[], size_t amount);
+bool check_collisions(planet_objects planets[], collider user, size_t amount);
 void run_orbit_prototype();
 
 

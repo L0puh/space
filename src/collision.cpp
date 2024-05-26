@@ -53,7 +53,7 @@ void Collision_prototype::update_prototype(){
 
    while (!glfwWindowShouldClose(global_states.window)){
       utils::debug_new_frame();
-      glClearBufferfv(GL_COLOR, 0, bg);
+      glClearBufferfv(GL_COLOR, 0, bg_color);
       glfwSetKeyCallback(global_states.window, Input::key_callback);
       
       c1.pos = Input::get_mouse_pos();
