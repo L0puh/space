@@ -59,10 +59,10 @@ int main() {
    int amount_planets = 4;
    planet_objects planets[amount_planets];
 
-   planets[0] = {150.f, {0.0f, 0.0f}, {0.0f, 0.0f}, 55.2f, {2.2, 2.2}, 0.0f};
-   planets[1] = {10.0f, {3.7f, 6.7f}, {12.0f, 12.0f}, 3.0f, {1.1, 1.1}, 1.0f};
-   planets[2] = {20.0f, {4.8f, 5.8f}, {-45.0f, -45.0f}, 2.2f, {1.2, 1.2}, 1.0f};
-   planets[3] = {29.0f, {6.9f, 6.9f}, {67.0f, 67.0f}, 2.2f, {1.2, 1.2}, 1.0f};
+   planets[0] = {150.f, {0.0f, 0.0f}, {0.0f, 0.0f}, 155.2f, {12.2, 12.2}, 0.0f};
+   planets[1] = {10.0f, {3.7f, 6.7f}, {12.0f, 12.0f}, 33.0f, {4.1, 4.1}, 1.0f};
+   planets[2] = {20.0f, {4.8f, 5.8f}, {-45.0f, -45.0f}, 22.2f, {3.2, 3.2}, 1.0f};
+   planets[3] = {29.0f, {6.9f, 6.9f}, {67.0f, 67.0f}, 22.2f, {4.2, 4.2}, 1.0f};
 
 #ifndef COLLISION_PROTOTYPE 
 #ifndef ORBIT_PROTOTYPE
@@ -87,10 +87,9 @@ int main() {
       
       for (int i = 1; i < amount_planets; i++){
          update_plantes(&planets[i], planets, amount_planets);
-         printf("%d: %.3f %.3f\n", i, planets[i].pos.x, planets[i].pos.y);
       }
 
-      if (check_collisions(planets, {user.pos, user.size, 1.0f}, amount_planets)) 
+      if (!check_collisions(planets, {user.pos, user.size, 1.0f}, amount_planets)) 
          printf("collision detected\n");
 
       glClearBufferfv(GL_COLOR, 0, bg_color);
@@ -98,7 +97,7 @@ int main() {
       utils::debug_console();
 
       //objects.draw(); 
-      Map::generate_objs(star, 0.1, object_type::dot);
+      Map::generate_objs(star, global_states.stars_amount, object_type::dot);
       user.draw(user.model, camera.view);
       draw_planets(planets, amount_planets, &planet, &dot);
      

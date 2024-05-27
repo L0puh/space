@@ -8,8 +8,9 @@
 
 
 void update_plantes(planet_objects *p, planet_objects planets[], size_t amount){
-   p->pos.x = sin(glfwGetTime()*global_states.timestep)/ p->mass * p->velocity.y;
-   p->pos.y = cos(glfwGetTime()*global_states.timestep)/ p->mass * p->velocity.x;
+   p->pos.x = sin(glfwGetTime()*global_states.timestep) / p->mass * p->velocity.y * p->size.x * global_states.gravity;
+   p->pos.y = cos(glfwGetTime()*global_states.timestep) / p->mass * p->velocity.x * p->size.y * global_states.gravity;
+
    p->orbit.push_back(p->pos);
 }
 
