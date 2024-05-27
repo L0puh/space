@@ -23,17 +23,17 @@ bool Camera::check_collisions(std::vector<collider> objs, glm::vec2 user_size, g
 
 void Camera::get_movement( float deltatime, glm::vec2 user_size, std::vector<collider> objs) {
    if (Input::is_pressed(GLFW_KEY_A)){
-      rotation += speed * deltatime;
+      rotation += rotation_speed * deltatime;
    } 
    if (Input::is_pressed(GLFW_KEY_D)){
-       rotation -= speed * deltatime;
+       rotation -= rotation_speed * deltatime;
    }
    if (Input::is_pressed(GLFW_KEY_W)){
       float x=pos.x,y=pos.y;
       x += -sin(rotation) * speed * deltatime;
       y += cos(rotation) * speed * deltatime;
       if (check_collisions(objs, user_size, {x, y})) {
-         rotation-=speed*deltatime;
+         rotation-=rotation_speed*deltatime;
       } else 
          pos = {x, y, pos.z};
    }
@@ -42,7 +42,7 @@ void Camera::get_movement( float deltatime, glm::vec2 user_size, std::vector<col
       x -= -sin(rotation) * speed * deltatime;
       y -= cos(rotation) * speed * deltatime;
       if (check_collisions(objs, user_size, {x,y}))
-         rotation+=speed*deltatime;
+         rotation+=rotation_speed*deltatime;
       else
          pos.x = x; pos.y = y;
    }

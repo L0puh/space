@@ -46,8 +46,6 @@ int main() {
    camera.set_position({1.0f, 1.0f, 0.0f});
    user.pos = camera.pos;
    
-   std::vector<collider> objs; //FIXME
-   objs.push_back({planet.pos, planet.size, planet.radius});
 
    float last_frame = 0.0f, deltatime;
 
@@ -59,11 +57,16 @@ int main() {
    int amount_planets = 4;
    planet_objects planets[amount_planets];
 
-   planets[0] = {150.f, {0.0f, 0.0f}, {0.0f, 0.0f}, 155.2f, {12.2, 12.2}, 0.0f};
-   planets[1] = {10.0f, {3.7f, 6.7f}, {12.0f, 12.0f}, 33.0f, {4.1, 4.1}, 1.0f};
-   planets[2] = {20.0f, {4.8f, 5.8f}, {-45.0f, -45.0f}, 22.2f, {3.2, 3.2}, 1.0f};
-   planets[3] = {29.0f, {6.9f, 6.9f}, {67.0f, 67.0f}, 22.2f, {4.2, 4.2}, 1.0f};
+   std::vector<collider> objs(amount_planets); //FIXME
 
+   planets[0] = {150.f, {0.0f, 0.0f}, {0.0f, 0.0f},    155.2f, {12.2, 12.2}, 2.0f};
+   planets[1] = {10.0f, {3.7f, 6.7f}, {12.0f, 12.0f},  33.0f,  {4.1, 4.1},   2.0f};
+   planets[2] = {20.0f, {4.8f, 5.8f}, {-45.0f, -45.0f},22.2f,  {3.2, 3.2},   2.0f};
+   planets[3] = {29.0f, {6.9f, 6.9f}, {67.0f, 67.0f},  22.2f,  {4.2, 4.2},   2.0f};
+
+   for (int i = 0; i < amount_planets; i++){
+      objs[i] = {planets[i].pos, planets[i].size, planets[i].radius};
+   }
 #ifndef COLLISION_PROTOTYPE 
 #ifndef ORBIT_PROTOTYPE
    while (!glfwWindowShouldClose(window)){
@@ -85,12 +88,11 @@ int main() {
       user.scale_object(user.size);
       star.translate_object(camera.pos);
       
-      for (int i = 1; i < amount_planets; i++){
+      for (int i = 1; i < amount_planets; i++)
          update_plantes(&planets[i], planets, amount_planets);
-      }
 
-      if (!check_collisions(planets, {user.pos, user.size, 1.0f}, amount_planets)) 
-         printf("collision detected\n");
+      for (int i = 0; i < amount_planets; i++)
+         objs[i] = {planets[i].pos, planets[i].size, planets[i].radius};
 
       glClearBufferfv(GL_COLOR, 0, bg_color);
       utils::debug_new_frame();

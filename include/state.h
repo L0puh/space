@@ -8,16 +8,16 @@ struct global {
    window_size w_size;
    Camera* camera;
    User* user;
-   boarder cur_boarder;
    struct collision {
       bool AABB_AABB;
       bool circle_AABB;
    };
+   boarder cur_boarder;
    collision collision_type;
-   float zoom = 1.0f;
+   float zoom = 10.0f;
    float timestep = 0.5f;
    float gravity = 10.f;
-   float stars_amount = 0.1f;
+   float stars_amount = 0.7f;
 };
 
 extern global global_states;

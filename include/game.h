@@ -192,8 +192,8 @@ class Texture {
 
 class Camera {
    public:
-      float speed = 1.2, rotation = 0.0f;
-      float map_offset = 2.8f;
+      float speed = 1.2, rotation_speed = 1.2, rotation = 0.0f;
+      float map_offset = 20.8f;
       glm::vec3 pos = glm::vec3(0.0f); 
       glm::mat4 view = glm::mat4(1.0f);
    public: 
