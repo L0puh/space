@@ -104,11 +104,6 @@ float get_deltatime(float *last_time);
 void GLAPIENTRY message_callback(GLenum src, GLenum type, GLuint id, GLuint severity,
                                  GLsizei len, const GLchar* msg, const GLvoid* param);
 
-namespace Map{
-   boarder set_boarders(glm::vec2);
-   void generate_objs(Object &obj, float amount, object_type type);
-};
-
 class Shader {
    public:
       Shader(const std::string& src_vertex, const std::string& src_fragment);
@@ -193,7 +188,7 @@ class Texture {
 class Camera {
    public:
       float speed = 1.2, rotation_speed = 1.2, rotation = 0.0f;
-      float map_offset = 20.8f;
+      float map_offset = 60.0f;
       glm::vec3 pos = glm::vec3(0.0f); 
       glm::mat4 view = glm::mat4(1.0f);
    public: 
