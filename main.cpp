@@ -9,7 +9,7 @@
 
 #define DEBUG_MODE
 /* #define COLLISION_PROTOTYPE */
-#define ORBIT_PROTOTYPE
+/* #define ORBIT_PROTOTYPE */
 
 global global_states;
 
@@ -33,6 +33,7 @@ int main() {
    Planet planet("../shaders/user.vert", "../shaders/user.frag", "../textures/planet.png", PNG, 5.0f);
    Object star("../shaders/standard.vert", "../shaders/standard.frag", NONE);
    Object dot("../shaders/standard.vert", "../shaders/standard.frag", Image::NONE); 
+   Black_hole hole;
 
 #ifdef COLLISION_PROTOTYPE
    Collision_prototype coll_p(Collision_prototype::AABB_AABB, square, square);
@@ -66,22 +67,27 @@ int main() {
    while (!glfwWindowShouldClose(window)){
       deltatime = get_deltatime(&last_frame); 
       glfwSetKeyCallback(window, Input::key_callback);
+      glfwSetScrollCallback(window, Input::scroll_callback);
       
       camera.update();
       planet.update();
       user.update();
+      hole.update();
       star.update();
       map.update(&objs);
+
+      hole.translate_object({8.0f, 8.0f}); 
+      hole.scale_object({4.0f, 2.0f});
 
       planet.translate_object(planet.pos);
       planet.scale_object({1.f, 1.f});
       objs[0] = {planet.pos, planet.size, planet.size.x/sqr_2};
-            
+
       camera.get_movement(deltatime, user.size, objs); 
+      hole.collide(&camera, {1.0f, 2.0f}, user.size);
       user.translate_object(camera.pos);
-      user.rotate_object(camera.rotation, glm::vec3(0.0f, 0.0f, 1.0f));
       user.scale_object(user.size);
-      star.translate_object(camera.pos);
+      user.rotate_object(camera.rotation, glm::vec3(0.0f, 0.0f, 1.0f));
       
 
       glClearBufferfv(GL_COLOR, 0, bg_color);
@@ -89,9 +95,10 @@ int main() {
       utils::debug_console();
 
       //objects.draw(); 
-      user.draw(user.model, camera.view);
       map.draw_stars();
       map.draw_planets();
+      hole.draw(hole.model, camera.view);
+      user.draw(user.model, camera.view);
      
       utils::debug_console_render();
       glfwSwapBuffers(window);

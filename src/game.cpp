@@ -101,6 +101,13 @@ namespace Input {
       y = -2*(y/global_states.w_size.height)+1;
       return {x, y};
    }
+   void scroll_callback(GLFWwindow* window, double xoffset, double yoffset){
+      global_states.zoom -= (float)yoffset;
+       if (global_states.zoom < 1.0f)
+           global_states.zoom = 1.0f;
+       if (global_states.zoom > global_states.camera->map_offset-20.0f)
+           global_states.zoom = global_states.camera->map_offset-20.0f;
+   }
 };
 
 

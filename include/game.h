@@ -2,6 +2,7 @@
 #define GAME_H
 
 #include "glm/ext/matrix_transform.hpp"
+#include <cstring>
 #include <glm/fwd.hpp>
 #include <glm/ext/matrix_float4x4.hpp>
 #include <glad/glad.h>
@@ -153,6 +154,7 @@ class Vertex{
 
 namespace Input {
    void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
+   void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
    bool is_pressed(int key);
    bool is_relesed(int key);
    glm::vec2 get_mouse_pos();
@@ -251,6 +253,14 @@ class User: public Object {
    public:
       User(std::string src_vertex, std::string src_fragment, std::string src_texture, Image img_type):
       Object(src_vertex, src_fragment, src_texture, img_type){};
+};
+
+class Black_hole: public Object {
+   public:
+      Black_hole(): Object("../shaders/user.vert", "../shaders/user.frag", "../textures/black_hole.png", PNG){}
+   public:
+      void collide(Camera *camera, glm::vec2 pos_to, glm::vec2 size);
+
 };
 
 
