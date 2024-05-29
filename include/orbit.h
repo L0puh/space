@@ -8,6 +8,7 @@
 
 #include "collision.h"
 #include "game.h"
+#include <ctime>
 #include <vector>
 
 class Map;
@@ -52,9 +53,13 @@ class Map{
       Planet planet;
       Object dot;
       std::vector<planet_object> planets;
+      int seed = static_cast <unsigned> (time(0));
    public:
+      float random_float(int start, int scale);
       boarder set_boarders(glm::vec2);
       void generate_objs(Object &obj, float amount, object_type type);
+      void generate_galaxy(int scale, int amount, std::vector<glm::vec2>*);
+      void draw_galaxy(std::vector<glm::vec2>);
       void draw_stars();
       void draw_planets();
       void update(std::vector<collider> *objs){

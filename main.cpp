@@ -5,6 +5,7 @@
 #include "utils.h"
 
 #include <GLFW/glfw3.h>
+#include <ctime>
 #include <vector>
 
 #define DEBUG_MODE
@@ -61,7 +62,7 @@ int main() {
 
    std::vector<collider> objs(amount_planets); //FIXME
    Map map(&objs, amount_planets);
-
+   std::vector<glm::vec2> stars(6000);
 #ifndef COLLISION_PROTOTYPE 
 #ifndef ORBIT_PROTOTYPE
    while (!glfwWindowShouldClose(window)){
@@ -96,10 +97,12 @@ int main() {
 
       //objects.draw(); 
       map.draw_stars();
+      map.generate_galaxy(100, stars.size(), &stars);
+      map.draw_galaxy(stars);
       map.draw_planets();
       hole.draw(hole.model, camera.view);
       user.draw(user.model, camera.view);
-     
+
       utils::debug_console_render();
       glfwSwapBuffers(window);
       glfwPollEvents();

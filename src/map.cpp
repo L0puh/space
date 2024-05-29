@@ -1,14 +1,14 @@
 #include "game.h"
 #include "orbit.h"
 #include "state.h"
+#include <cstddef>
+#include <ctime>
 #include <vector>
 
 boarder Map::set_boarders(glm::vec2 pos){
    boarder cur_boarder = global_states.cur_boarder;
    float map_offset = global_states.camera->map_offset;
    if (pos.y+global_states.zoom >= cur_boarder.max_y || pos.x+global_states.zoom >= cur_boarder.max_x) {
-      cur_boarder.prev_x = cur_boarder.max_x;
-      cur_boarder.prev_y = cur_boarder.max_y;
       cur_boarder.max_y = pos.y+map_offset;
       cur_boarder.min_x = pos.x-map_offset;
       cur_boarder.max_x = pos.x+map_offset;
@@ -22,12 +22,27 @@ boarder Map::set_boarders(glm::vec2 pos){
    }
    return cur_boarder;
 }
+float Map::random_float(int start, int scale){
+   return (static_cast <float> (rand()) / static_cast <float> (RAND_MAX/scale+start)) - start;
+}
+
+void Map::generate_galaxy(int scale, int amount, std::vector<glm::vec2> *stars){
+   srand(seed);
+   for (int i=0; i < amount; i++){
+      float distance = random_float(scale, scale);
+      float angle = random_float(scale, scale) * 2.f * glm::pi<float>();
+      printf("%f\n", distance);
+      float pos_x = cos(angle) * distance;
+      float pos_y = sin(angle) * distance;
+      stars->at(i) = {pos_x, pos_y};
+   }
+}
 
 void Map::generate_objs(Object &obj, float amount, object_type type){
    boarder cur_boarder;
    cur_boarder = set_boarders(global_states.camera->pos);
    global_states.cur_boarder = cur_boarder;
-   srand(100);
+   srand(seed);
    for ( float i=cur_boarder.min_x; i <= cur_boarder.max_x; i+=amount){
       for (float j=cur_boarder.min_y; j <= cur_boarder.max_y; j+=amount){
          bool is_star;
@@ -71,4 +86,11 @@ void Map::draw_planets(){
 
 void Map::draw_stars(){
    generate_objs(dot, global_states.stars_amount, object_type::dot);
+}
+void Map::draw_galaxy(std::vector<glm::vec2> stars){
+   for (int i=0; i!=stars.size();i++) {
+      dot.update();
+      dot.translate_object(stars[i]);
+      dot.draw(dot.model, global_states.camera->view, white);
+   }
 }
