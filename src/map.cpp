@@ -23,15 +23,14 @@ boarder Map::set_boarders(glm::vec2 pos){
    return cur_boarder;
 }
 float Map::random_float(int start, int scale){
-   return (static_cast <float> (rand()) / static_cast <float> (RAND_MAX/scale+start)) - start;
+   return start + (static_cast <float> (rand()) / static_cast <float> (RAND_MAX/scale));
 }
 
 void Map::generate_galaxy(int scale, int amount, std::vector<glm::vec2> *stars){
    srand(seed);
    for (int i=0; i < amount; i++){
-      float distance = random_float(scale, scale);
-      float angle = random_float(scale, scale) * 2.f * glm::pi<float>();
-      printf("%f\n", distance);
+      float distance = random_float(1.0f, scale);
+      float angle = random_float(1.0f, scale) * 2.f * glm::pi<float>();
       float pos_x = cos(angle) * distance;
       float pos_y = sin(angle) * distance;
       stars->at(i) = {pos_x, pos_y};
@@ -68,13 +67,17 @@ Map::Map(std::vector<collider> *objs, size_t amount_planets):
    dot("../shaders/standard.vert", "../shaders/standard.frag", Image::NONE),
    planets(amount_planets)
 {
-   
-   //FIXME:
-   planets[0] = {150.f, {0.0f, 0.0f}, {0.0f, 0.0f},    155.2f, {12.2, 12.2}, 2.0f};
-   planets[1] = {10.0f, {3.7f, 6.7f}, {12.0f, 12.0f},  33.0f,  {4.1, 4.1},   2.0f};
-   planets[2] = {20.0f, {4.8f, 5.8f}, {-45.0f, -45.0f},22.2f,  {3.2, 3.2},   2.0f};
-   planets[3] = {29.0f, {6.9f, 6.9f}, {67.0f, 67.0f},  22.2f,  {4.2, 4.2},   2.0f};
-
+  
+   planets[0] = {550.f, {0.0f, 0.0f}, {0.0f, 0.0f}, 15.2f, {12.2, 12.2}, 2.0f};
+   srand(seed);
+   for (int i = 1; i < amount_planets; i++){
+      float vel = random_float(0, 80);
+      float sz = random_float(1, 10);
+      planets[i] = {random_float(20, 500), 
+         {random_float(0, 250), random_float(0, 250)},
+         {vel, vel}, random_float(0, 7), 
+         {sz, sz}, 10.0f};
+   }
    for (int i = 0; i < amount_planets; i++){
       objs->at(i) = {planets[i].pos, planets[i].size, planets[i].radius};
    }
@@ -88,7 +91,7 @@ void Map::draw_stars(){
    generate_objs(dot, global_states.stars_amount, object_type::dot);
 }
 void Map::draw_galaxy(std::vector<glm::vec2> stars){
-   for (int i=0; i!=stars.size();i++) {
+   for (int i=0; i<stars.size();i++) {
       dot.update();
       dot.translate_object(stars[i]);
       dot.draw(dot.model, global_states.camera->view, white);

@@ -58,7 +58,7 @@ int main() {
    global_states.window = window;
    global_states.w_size = get_window_size(window);
 
-   size_t amount_planets = 4;
+   size_t amount_planets = 10;
 
    std::vector<collider> objs(amount_planets); //FIXME
    Map map(&objs, amount_planets);
@@ -96,7 +96,7 @@ int main() {
       utils::debug_console();
 
       //objects.draw(); 
-      map.draw_stars();
+      /* map.draw_stars(); */
       map.generate_galaxy(100, stars.size(), &stars);
       map.draw_galaxy(stars);
       map.draw_planets();
