@@ -3,6 +3,7 @@
 
 #include "collision.h"
 #include "game.h"
+#include "orbit.h"
 
 #include <imgui/imgui.h>
 #include <imgui/imgui_impl_glfw.h>
@@ -12,6 +13,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <string>
+#include <vector>
 
 struct collider;
 class Collision_prototype;
@@ -34,6 +36,7 @@ namespace utils{
    void debug_new_frame();
    void debug_console_render();
    void debug_console(collider*, collider*, Collision_prototype::collision_type*);
+   void debug_console(std::vector<planet_object> *planets);
 };
 
 

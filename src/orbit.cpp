@@ -47,22 +47,21 @@ namespace orbit {
       Object dot("../shaders/standard.vert", "../shaders/standard.frag", Image::NONE); 
       int amount_planets = 4;
       std::vector<planet_object> planets(amount_planets);
-
       planets[0] = {50.0f, {0.0f, 0.0f}, {0.2f, 0.2f}, 5.2f, {0.2, 0.2}, 0.0f};
       planets[1] = {10.0f, {0.4f, 0.4f}, {2.0f, 2.0f}, 4.2f, {0.1, 0.1}, 1.0f};
       planets[2] = {30.0f, {0.8f, 0.8f}, {-3.0f, -3.0f}, 4.2f, {0.2, 0.2}, 1.0f};
       planets[3] = {39.0f, {0.9f, 0.9f}, {4.0f, -5.0f}, 4.2f, {0.2, 0.2}, 1.0f};
-
+      utils::log("DONE PLANET INIT");
       while (!glfwWindowShouldClose(global_states.window)){
          utils::debug_new_frame();
          glClearBufferfv(GL_COLOR, 0, bg_color);
          glfwSetKeyCallback(global_states.window, Input::key_callback);
-     
-         for (int i = 1; i < amount_planets; i++){
-            update_plantes(&planets[i], planets, sizeof(planets));
-         }
-         draw_planets(planets, amount_planets, &planet, &dot);
 
+         utils::debug_console(&planets);
+     
+         for (int i = 1; i < amount_planets; i++)
+            update_plantes(&planets[i], planets, sizeof(planets));
+         draw_planets(planets, amount_planets, &planet, &dot);
 
          utils::debug_console_render();
          glfwSwapBuffers(global_states.window);

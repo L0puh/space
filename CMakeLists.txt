@@ -12,5 +12,5 @@ include_directories(include)
 file(GLOB_RECURSE SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
 file(GLOB_RECURSE LIBS    ${CMAKE_CURRENT_SOURCE_DIR}/libs/*.c ${CMAKE_CURRENT_SOURCE_DIR}/libs/*.cpp)
 
-add_executable(space ${LIBS} ${SOURCES})
+add_executable(space ${LIBS} ${SOURCES} main.cpp)
 target_link_libraries(space glfw OpenGL::GL)

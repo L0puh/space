@@ -10,6 +10,10 @@
 #include "game.h"
 #include <vector>
 
+class Map;
+class Planet;
+struct planet_object;
+
 struct planet_object{
    float radius;
    glm::vec2 pos;
@@ -26,6 +30,18 @@ namespace orbit {
    void update_plantes(planet_object *p, std::vector<planet_object> planets, size_t amount);
    bool check_collisions(std::vector<planet_object>, collider user, size_t amount);
    void run_orbit_prototype();
+};
+
+class Planet: public Object{
+   public:
+      Planet(std::string src_vertex, std::string src_fragment, std::string src_texture, Image img_type, float p_radius): 
+         Object(src_vertex, src_fragment, src_texture, img_type){ radius = p_radius;}
+   public:
+      uint ID;
+      float radius;
+      float mass;
+      glm::vec2 velocity;
+      float distance_to_center = 0;
 };
 
 class Map{
@@ -49,5 +65,6 @@ class Map{
             objs->at(i) = {planets[i].pos, planets[i].size, planets[i].radius};
       }
 };
+
 
 #endif

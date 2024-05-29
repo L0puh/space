@@ -2,6 +2,7 @@
 #include "utils.h"
 #include "imgui/imgui.h"
 #include "state.h"
+#include <string>
 
 namespace utils {
    void init_debug_console(){
@@ -66,6 +67,32 @@ namespace utils {
          bool circle_AABB, AABB_AABB; 
          ImGui::Checkbox("AABBvsAABB", &global_states.collision_type.AABB_AABB);
          global_states.collision_type.circle_AABB = global_states.collision_type.AABB_AABB ? 0: 1;
+      }
+      ImGui::End();
+   }
+   void debug_console(std::vector<planet_object> *planets){
+      ImGui::Begin("console", 0, ImGuiWindowFlags_AlwaysAutoResize);
+      {
+         ImGui::SliderFloat("ZOOM", &global_states.zoom, 1.0f, 10.0f, "%.4f", 0);
+         ImGui::SliderFloat("GRAVITY", &global_states.gravity, 1.0f, 20.0f, "%.4f", 0);
+         ImGui::SliderFloat("TIMESTAMP", &global_states.timestep, 0.00001f, 1.0f, "%.9f", 0);
+         for (int i=1; i < planets->size(); i++){
+            ImGui::Text("PL %d\n", i);
+            std::string name_mass = "MASS" + std::to_string(i),
+                        name_dist = "DIST" + std::to_string(i),
+                        name_size_x = "SIZEx" + std::to_string(i),
+                        name_size_y = "SIZEy" + std::to_string(i),
+                        name_vel_x  = "VELx" + std::to_string(i),
+                        name_vel_y = "VELy" + std::to_string(i);
+
+            ImGui::SliderFloat(name_mass.c_str(), &(planets->at(i).mass), 0, 100.0f, "%.4f", 0); 
+            ImGui::SliderFloat(name_dist.c_str(), &(planets->at(i).distance_to_center), 0, 100.0f, "%.4f", 0); 
+            ImGui::SliderFloat(name_size_x.c_str(), &(planets->at(i).size.x), 0, 2.0f, "%.8f", 0); 
+            ImGui::SliderFloat(name_size_y.c_str(), &(planets->at(i).size.y), 0, 2.0f, "%.8f", 0); 
+            ImGui::SliderFloat(name_vel_x.c_str(), &(planets->at(i).velocity.x), -10, 10.0f, "%.9f", 0); 
+            ImGui::SliderFloat(name_vel_y.c_str(), &(planets->at(i).velocity.y), -10, 10.0f, "%.9f", 0);
+            ImGui::Separator();
+         }
       }
       ImGui::End();
    }

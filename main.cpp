@@ -9,7 +9,7 @@
 
 #define DEBUG_MODE
 /* #define COLLISION_PROTOTYPE */
-/* #define ORBIT_PROTOTYPE */
+#define ORBIT_PROTOTYPE
 
 global global_states;
 
@@ -39,10 +39,12 @@ int main() {
    coll_p.update_prototype();
 #endif
 
+   Camera camera;
 #ifdef ORBIT_PROTOTYPE
+   camera.view = glm::mat4(1.0f);
+   global_states.camera = &camera;
    orbit::run_orbit_prototype();
 #endif
-   Camera camera;
    camera.set_position({1.0f, 1.0f, 0.0f});
    user.pos = camera.pos;
    
