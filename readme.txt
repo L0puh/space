@@ -1,10 +1,17 @@
+ _________
+< spaceGL >
+ ---------
+        \   ^__^
+         \  (oo)\_______
+            (__)\       )\/\
+                ||----w |
+                ||     ||
+
 -----------------------------------------
 
-just an attempt to do something with
-opengl and c++. space game exploring 
-basics of game programming at low level.
+     game with opengl and GLFW.
 
----------------------------------------
+-----------------------------------------
 
 sources: 
 
