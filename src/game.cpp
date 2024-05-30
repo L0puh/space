@@ -5,7 +5,6 @@
 #include <sstream>
 #include "utils.h"
 
-
 GLFWwindow* init_window(const int width, const int height){
    GLFWwindow *window;
    if (!glfwInit()) {

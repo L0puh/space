@@ -71,5 +71,33 @@ class Map{
       }
 };
 
+class Galaxy{
+   public: 
+      Galaxy(Object *star): star(star){}
+   public:
+      Object *star;
+      bool is_star=false;
+      float offset_up=0.0f;
+      float offset_right=0.0f;
+      uint32_t n_seed = 0;
+      double rnd_double(double min, double max){
+         return ((double)rnd()/(double)(0x7FFFFFFF)) * (max-min) + min;
+      }
+      int rnd_int(int min, int max) {
+         return (rnd() % (max - min)) + min;
+      }
+      uint32_t rnd(){
+         n_seed += 0xe120fc15;
+         uint64_t tmp;
+         tmp = (uint64_t)n_seed * 0x4a39b70d;
+         uint32_t m1 = (tmp >> 32) ^ tmp;
+         tmp = (uint64_t)m1 * 0x12fad5c9;
+         uint32_t m2 = (tmp >> 32) ^ tmp;
+         return m2;
+      }
+      void generate_galaxy();
+      bool get_star(uint32_t x, uint32_t y);
+};
+
 
 #endif

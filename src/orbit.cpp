@@ -1,4 +1,5 @@
 #include "orbit.h"
+#include "game.h"
 #include "state.h"
 #include "collision.h"
 #include "utils.h"
@@ -68,4 +69,35 @@ namespace orbit {
          glfwPollEvents();
       }
    }
+}
+void Galaxy::generate_galaxy(){
+   if (Input::is_pressed(GLFW_KEY_UP)){
+      offset_up+=global_states.camera->speed;
+   }
+   if (Input::is_pressed(GLFW_KEY_DOWN)){
+      offset_up-=global_states.camera->speed;
+   }
+   if (Input::is_pressed(GLFW_KEY_RIGHT)){
+      offset_right+=global_states.camera->speed;
+   }
+   if (Input::is_pressed(GLFW_KEY_LEFT)){
+      offset_right-=global_states.camera->speed;
+   }
+   int max = global_states.camera->map_offset; 
+   for (float x=0.0f; x < max; x += global_states.stars_amount){
+      for (float y=0.0f; y < max; y += global_states.stars_amount){
+         uint32_t seed1 = offset_right + x;
+         uint32_t seed2 = offset_up + y;
+         bool is_star = get_star(seed1, seed2);
+         if (is_star){
+            star->update();
+            star->translate_object({x, y});
+            star->draw(star->model, global_states.camera->view, white);
+         }
+      }
+   }
+}
+bool Galaxy::get_star(uint32_t x, uint32_t y){
+   n_seed = (x & 0xFFFF) << 16 | (y & 0xFFFF);
+   return rnd_int(0, 10) == 1;
 }

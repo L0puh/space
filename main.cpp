@@ -48,6 +48,7 @@ int main() {
    Planet planet("../shaders/user.vert", "../shaders/user.frag", "../textures/planet.png", PNG, 5.0f);
    Object star("../shaders/standard.vert", "../shaders/standard.frag", NONE);
    Object dot("../shaders/standard.vert", "../shaders/standard.frag", Image::NONE); 
+   Galaxy galaxy(&dot);
    Black_hole hole;
 
 #ifdef COLLISION_PROTOTYPE
@@ -111,10 +112,11 @@ int main() {
       utils::debug_console();
 
       //objects.draw(); 
-      map.draw_stars();
-      map.generate_galaxy(1000, stars.size(), &stars);
-      map.draw_galaxy(stars);
-      map.draw_planets();
+      /* map.draw_stars(); */
+      /* map.generate_galaxy(1000, stars.size(), &stars); */
+      /* map.draw_galaxy(stars); */
+      galaxy.generate_galaxy();
+      /* map.draw_planets(); */
       hole.draw(hole.model, camera.view);
       user.draw(user.model, camera.view);
 
