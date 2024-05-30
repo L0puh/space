@@ -37,8 +37,30 @@ struct boarder {
    float prev_y = 3.0f;
 };
 
+struct Data {
+   glm::vec3 pos_tr;
+   glm::vec3 pos_br;
+   glm::vec3 pos_bl;
+   glm::vec3 pos_tl;
+   glm::vec2 tex_tr;
+   glm::vec2 tex_br;
+   glm::vec2 tex_bl;
+   glm::vec2 tex_tl;
+};
+
 /*********************************************************/
 /*                      DATA                             */
+
+const Data data_square{
+   .pos_tr{0.5f,  0.5f, 0.0f},
+   .pos_br{0.5f, -0.5f, 0.0f},
+   .pos_bl{-0.5f, -0.5f, 0.0f}, 
+   .pos_tl{-0.5f,  0.5f, 0.0f},
+   .tex_tr{1.0f, 1.0f},
+   .tex_br{1.0f, 0.0f},
+   .tex_bl{0.0f, 0.0f}, 
+   .tex_tl{0.0f, 1.0f},
+};
 
 const float square_vertices[] = {
    // position          
@@ -57,13 +79,7 @@ const float data_triangle[] = {
 const float data_dot[] = {
     0.0f, 0.0f, 0.0f
 };
-const float data_square[] = {
-   // position          texture 
-     0.5f,  0.5f, 0.0f,  1.0f, 1.0f,   // top right
-     0.5f, -0.5f, 0.0f,  1.0f, 0.0f,   // bottom right
-    -0.5f, -0.5f, 0.0f,  0.0f, 0.0f,   // bottom left
-    -0.5f,  0.5f, 0.0f,  0.0f, 1.0f,   // top left 
-};
+
 const uint indices_square[] = {
     0, 1, 2,            // first triangle
     0, 2, 3             // second triangle
@@ -207,7 +223,7 @@ class Camera {
 class Object {
    public:
       Object(object_type);
-      Object(std::string src_vertex, std::string src_fragment, std::string src_texture, Image img_type);
+      Object(std::string src_vertex, std::string src_fragment, std::string src_texture, Image img_type, Data data=data_square);
       Object(std::string src_vertex, std::string src_fragment, Image img_type);
       ~Object();
       glm::mat4 model = glm::mat4(1.0f);
@@ -217,11 +233,13 @@ class Object {
       Image tex_type;
       Texture texture;
       Vertex vertex;
+      Data data;
    public:
       glm::mat4 get_projection(float zoom);
       void add_shaders(std::string src_vertex, std::string src_fragment);
       void add_texture(std::string src_texture, Image img_type);
     
+      void set_data(Data d) { data = d; }
       void update() { model = glm::mat4(1.0f); }
       
       static void scale_object(glm::mat4 *model, glm::vec2 scaler);
@@ -241,6 +259,7 @@ class Object {
       }
 
       void draw(glm::mat4 &model, glm::mat4 view);
+      void draw(glm::mat4 &model, glm::mat4 view, Texture texture);
       void draw(glm::mat4 &model, glm::mat4 view, glm::vec3 color);
 };
 
@@ -251,8 +270,8 @@ class User: public Object {
       glm::vec2 size = {0.2, 0.2};
       glm::vec2 pos = {1.0, 1.0};
    public:
-      User(std::string src_vertex, std::string src_fragment, std::string src_texture, Image img_type):
-      Object(src_vertex, src_fragment, src_texture, img_type){};
+      User(std::string src_vertex, std::string src_fragment, std::string src_texture, Image img_type, Data data):
+      Object(src_vertex, src_fragment, src_texture, img_type, data){};
 };
 
 class Black_hole: public Object {

@@ -18,6 +18,13 @@ void Object::add_texture(std::string src_texture, Image img_type){
 }
 
 Object::Object(object_type type){
+   float data_square[20] = {
+        0.5f,  0.5f, 0.0f,  data.tex_tr.x, data.tex_tr.y,   // top right
+        0.5f, -0.5f, 0.0f,  data.tex_br.x, data.tex_br.y,   // bottom right,
+       -0.5f, -0.5f, 0.0f,  data.tex_bl.x, data.tex_bl.y,   // bottom left
+       -0.5f,  0.5f, 0.0f,  data.tex_tl.x, data.tex_tl.y   // top left
+   };
+
    if (type == circle){
       vertex.create_VBO(data_square, sizeof(data_square));
       vertex.create_EBO(indices_square, sizeof(indices_square));
@@ -45,11 +52,20 @@ Object::Object(std::string src_vertex, std::string src_fragment, Image img_type)
    }
 }
 
-Object::Object(std::string src_vertex, std::string src_fragment, std::string src_texture, Image img_type):
-   shader(src_vertex, src_fragment), texture(src_texture, img_type), tex_type(img_type)
+Object::Object(std::string src_vertex, std::string src_fragment, std::string src_texture, Image img_type, Data data):
+   shader(src_vertex, src_fragment), texture(src_texture, img_type), tex_type(img_type), data(data)
 {
    texture.load_texture();
-   vertex.create_VBO(data_square, sizeof(data_square));
+   //FIXME:
+   
+   float data_obj[] = {
+        0.5f,  0.5f, 0.0f,  data.tex_tr.x, data.tex_tr.y,   // top right
+        0.5f, -0.5f, 0.0f,  data.tex_br.x, data.tex_br.y,   // bottom right,
+       -0.5f, -0.5f, 0.0f,  data.tex_bl.x, data.tex_bl.y,   // bottom left
+       -0.5f,  0.5f, 0.0f,  data.tex_tl.x, data.tex_tl.y   // top left
+   };
+
+   vertex.create_VBO(data_obj, sizeof(data_obj));
    vertex.create_EBO(indices_square, sizeof(indices_square));
    vertex.add_attribute(0, 3, GL_FLOAT, GL_FALSE, 5*sizeof(float), 0);
    vertex.add_attribute(1, 2, GL_FLOAT, GL_FALSE, 5*sizeof(float), 3);
@@ -71,6 +87,21 @@ void Object::rotate_object(glm::mat4 *model, float angle, glm::vec3 pos){
    *model = glm::rotate(*model, angle, pos);
 }
 
+void Object::draw(glm::mat4 &model, glm::mat4 view, Texture texture){
+   glm::mat4 proj = get_projection(global_states.zoom);
+   if (tex_type != NONE && tex_type != LINES)
+      texture.use();
+   shader.use();
+   shader.set_matrix4fv("proj", proj);
+   shader.set_matrix4fv("view", view);
+   shader.set_matrix4fv("model", model);
+   if (tex_type == NONE)
+      vertex.draw_buffer(GL_POINTS, 1);
+   else if (tex_type == LINES)
+      vertex.draw(GL_TRIANGLES, LEN(indices_square));
+   else
+      vertex.draw(GL_TRIANGLES, LEN(indices_square));
+}
 void Object::draw(glm::mat4 &model, glm::mat4 view){
    glm::mat4 proj = get_projection(global_states.zoom);
    if (tex_type != NONE && tex_type != LINES)

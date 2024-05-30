@@ -29,8 +29,22 @@ int main() {
    glDebugMessageCallback(message_callback, 0);
    utils::log("DEBUG MODE");
 #endif 
+  
+   // TEXTURE SHEET (FIXME: create an API for sheet maping)
+   Texture tex_sheet("../textures/texture_sheet.png", PNG);
+   tex_sheet.load_texture();
+   int x_t = 0, y_t = 1;
+   float sh_h = 1200, sh_w = 1200;
+   float sp_w = 300, sp_h = 300;
+   Data data = data_square;
+   data = {
+      .tex_tr{(x_t*sp_w)/sh_w, (y_t*sp_h)/sh_h},
+      .tex_br{((x_t+1)*sp_w)/sh_w, (y_t*sp_h)/sh_h},
+      .tex_bl{((x_t+1)*sp_w)/sh_w, ((y_t+1)*sp_h)/sh_h},
+      .tex_tl{(x_t*sp_w)/sh_w, ((y_t+1)*sp_h)/sh_h},
+   };
 
-   User   user("../shaders/user.vert", "../shaders/user.frag", "../textures/spaceship.png", PNG);
+   User   user("../shaders/user.vert", "../shaders/user.frag", "../textures/texture_sheet.png", PNG, data);
    Planet planet("../shaders/user.vert", "../shaders/user.frag", "../textures/planet.png", PNG, 5.0f);
    Object star("../shaders/standard.vert", "../shaders/standard.frag", NONE);
    Object dot("../shaders/standard.vert", "../shaders/standard.frag", Image::NONE); 
@@ -58,11 +72,12 @@ int main() {
    global_states.window = window;
    global_states.w_size = get_window_size(window);
 
-   size_t amount_planets = 10;
 
+   size_t amount_planets = 10;
    std::vector<collider> objs(amount_planets); //FIXME
    Map map(&objs, amount_planets);
    std::vector<glm::vec2> stars(6000);
+
 #ifndef COLLISION_PROTOTYPE 
 #ifndef ORBIT_PROTOTYPE
    while (!glfwWindowShouldClose(window)){
@@ -96,8 +111,8 @@ int main() {
       utils::debug_console();
 
       //objects.draw(); 
-      /* map.draw_stars(); */
-      map.generate_galaxy(100, stars.size(), &stars);
+      map.draw_stars();
+      map.generate_galaxy(1000, stars.size(), &stars);
       map.draw_galaxy(stars);
       map.draw_planets();
       hole.draw(hole.model, camera.view);
