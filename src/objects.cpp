@@ -9,11 +9,9 @@
 void Object::add_shaders(std::string src_vertex, std::string src_fragment){
    shader.init_shader(src_vertex, src_fragment);
 }
-void Object::add_texture(std::string src_texture, Image img_type){
+
+void Object::set_type(Image img_type){
    tex_type = img_type;
-   if (img_type == NONE || img_type == LINES) return;
-   texture.init_texture(src_texture, img_type);
-   texture.load_texture();
 }
 
 Object::Object(object_type type){
@@ -37,8 +35,7 @@ Object::Object(object_type type){
 
 }
 Object::Object(std::string src_vertex, std::string src_fragment, Image img_type): 
-   shader(src_vertex, src_fragment), 
-   texture("", NONE), tex_type(img_type)
+   shader(src_vertex, src_fragment), tex_type(img_type)
 {
    if (img_type == NONE){
       vertex.create_VBO(data_dot, sizeof(data_dot));
@@ -51,12 +48,17 @@ Object::Object(std::string src_vertex, std::string src_fragment, Image img_type)
    }
 }
 
-Object::Object(std::string src_vertex, std::string src_fragment, std::string src_texture, Image img_type, Data data):
-   shader(src_vertex, src_fragment), texture(src_texture, img_type), tex_type(img_type), data(data)
+Object::Object(std::string src_vertex, std::string src_fragment, Texture *texture_sheet, Texture_sheet coord):
+   shader(src_vertex, src_fragment), tex_sheet(texture_sheet) 
 {
-   texture.load_texture();
-   //FIXME:
-   
+
+   data = {
+      .tex_tr{(coord.x_index*coord.sprite_width)/coord.sheet_width, (coord.y_index*coord.sprite_height)/coord.sheet_height},
+      .tex_br{((coord.x_index+1)*coord.sprite_width)/coord.sheet_width, (coord.y_index*coord.sprite_height)/coord.sheet_height},
+      .tex_bl{((coord.x_index+1)*coord.sprite_width)/coord.sheet_width, ((coord.y_index+1)*coord.sprite_height)/coord.sheet_height},
+      .tex_tl{(coord.x_index*coord.sprite_width)/coord.sheet_width, ((coord.y_index+1)*coord.sprite_height)/coord.sheet_height},
+   };
+
    float data_obj[] = {
         0.5f,  0.5f, 0.0f,  data.tex_tr.x, data.tex_tr.y,   // top right
         0.5f, -0.5f, 0.0f,  data.tex_br.x, data.tex_br.y,   // bottom right,
@@ -70,9 +72,10 @@ Object::Object(std::string src_vertex, std::string src_fragment, std::string src
    vertex.add_attribute(1, 2, GL_FLOAT, GL_FALSE, 5*sizeof(float), 3);
 }
 
+
 Object::~Object(){
    shader.delete_shader();
-   texture.delete_texture();
+   tex_sheet->delete_texture();
 }
 
 void Object::scale_object(glm::mat4 *model, glm::vec2 scaler){
@@ -89,7 +92,7 @@ void Object::rotate_object(glm::mat4 *model, float angle, glm::vec3 pos){
 void Object::draw(glm::mat4 &model, glm::mat4 view, Texture texture){
    glm::mat4 proj = get_projection(global_states.zoom);
    if (tex_type != NONE && tex_type != LINES)
-      texture.use();
+      tex_sheet->use();
    shader.use();
    shader.set_matrix4fv("proj", proj);
    shader.set_matrix4fv("view", view);
@@ -104,7 +107,7 @@ void Object::draw(glm::mat4 &model, glm::mat4 view, Texture texture){
 void Object::draw(glm::mat4 &model, glm::mat4 view){
    glm::mat4 proj = get_projection(global_states.zoom);
    if (tex_type != NONE && tex_type != LINES)
-      texture.use();
+      tex_sheet->use();
    shader.use();
    shader.set_matrix4fv("proj", proj);
    shader.set_matrix4fv("view", view);
@@ -120,7 +123,7 @@ void Object::draw(glm::mat4 &model, glm::mat4 view){
 void Object::draw(glm::mat4 &model, glm::mat4 view, glm::vec3 color){
    glm::mat4 proj = get_projection(global_states.zoom);
    if (tex_type != NONE && tex_type != LINES)
-      texture.use();
+      tex_sheet->use();
    shader.use();
    shader.set_matrix4fv("proj", proj);
    shader.set_matrix4fv("view", view);

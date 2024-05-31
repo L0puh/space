@@ -12,7 +12,7 @@ namespace orbit {
    void update_plantes(planet_object *p, std::vector<planet_object> planets, size_t amount){
       p->pos.x = sin(glfwGetTime()*global_states.timestep) / p->mass * p->velocity.y * p->size.x * global_states.gravity;
       p->pos.y = cos(glfwGetTime()*global_states.timestep) / p->mass * p->velocity.x * p->size.y * global_states.gravity;
-      if (p->orbit.size() < 2*glm::pi<float>()*p->radius)
+      if (p->orbit.size() < 2*glm::pi<float>()*p->size.x/sqr_2)
          p->orbit.push_back(p->pos);
    }
 
@@ -43,8 +43,13 @@ namespace orbit {
    }
 
    void run_orbit_prototype(){
+
+      Texture tex_sheet("../textures/texture_sheet.png", PNG);
+      tex_sheet.load_texture();
+      Texture_sheet coord;
+      coord = {0, 3};
       Planet planet("../shaders/user.vert", "../shaders/user.frag", 
-                     "../textures/planet.png", PNG, 5.0f);
+                     &tex_sheet, coord);
       Object dot("../shaders/standard.vert", "../shaders/standard.frag", Image::NONE); 
       int amount_planets = 4;
       std::vector<planet_object> planets(amount_planets);

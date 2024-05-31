@@ -48,6 +48,15 @@ struct Data {
    glm::vec2 tex_tl;
 };
 
+struct Texture_sheet{
+   int x_index = 0;
+   int y_index = 0;
+   float sheet_width = 1200.0f;
+   float sheet_height = 1200.0f;
+   float sprite_width = 300.0f;
+   float sprite_height= 300.0f;
+};
+
 /*********************************************************/
 /*                      DATA                             */
 
@@ -230,7 +239,7 @@ class Camera {
 class Object {
    public:
       Object(object_type);
-      Object(std::string src_vertex, std::string src_fragment, std::string src_texture, Image img_type, Data data=data_square);
+      Object(std::string src_vertex, std::string src_fragment, Texture *texture_sheet, Texture_sheet coord);
       Object(std::string src_vertex, std::string src_fragment, Image img_type);
       ~Object();
       glm::mat4 model = glm::mat4(1.0f);
@@ -238,14 +247,13 @@ class Object {
       glm::vec3 pos = glm::vec3(0.0f);
       Shader shader;
       Image tex_type;
-      Texture texture;
+      Texture *tex_sheet;
       Vertex vertex;
       Data data;
    public:
       glm::mat4 get_projection(float zoom);
       void add_shaders(std::string src_vertex, std::string src_fragment);
-      void add_texture(std::string src_texture, Image img_type);
-    
+      void set_type(Image type);
       void set_data(Data d) { data = d; }
       void update() { model = glm::mat4(1.0f); }
       
@@ -278,13 +286,14 @@ class User: public Object {
       glm::vec2 size = {0.2, 0.2};
       glm::vec2 pos = {1.0, 1.0};
    public:
-      User(std::string src_vertex, std::string src_fragment, std::string src_texture, Image img_type, Data data):
-      Object(src_vertex, src_fragment, src_texture, img_type, data){};
+      User(std::string src_vertex, std::string src_fragment, Texture *tex_sheet, Texture_sheet coord):
+      Object(src_vertex, src_fragment, tex_sheet, coord){};
 };
 
 class Black_hole: public Object {
    public:
-      Black_hole(): Object("../shaders/user.vert", "../shaders/user.frag", "../textures/black_hole.png", PNG){}
+      Black_hole(std::string src_vertex, std::string src_fragment, Texture* tex_sheet, Texture_sheet coord): 
+         Object(src_vertex, src_fragment, tex_sheet, coord){}
    public:
       void collide(Camera *camera, glm::vec2 pos_to, glm::vec2 size);
 

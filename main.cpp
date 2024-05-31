@@ -30,26 +30,18 @@ int main() {
    utils::log("DEBUG MODE");
 #endif 
   
-   // TEXTURE SHEET (FIXME: create an API for sheet maping)
    Texture tex_sheet("../textures/texture_sheet.png", PNG);
    tex_sheet.load_texture();
-   int x_t = 0, y_t = 1;
-   float sh_h = 1200, sh_w = 1200;
-   float sp_w = 300, sp_h = 300;
-   Data data = data_square;
-   data = {
-      .tex_tr{(x_t*sp_w)/sh_w, (y_t*sp_h)/sh_h},
-      .tex_br{((x_t+1)*sp_w)/sh_w, (y_t*sp_h)/sh_h},
-      .tex_bl{((x_t+1)*sp_w)/sh_w, ((y_t+1)*sp_h)/sh_h},
-      .tex_tl{(x_t*sp_w)/sh_w, ((y_t+1)*sp_h)/sh_h},
-   };
-
-   User   user("../shaders/user.vert", "../shaders/user.frag", "../textures/texture_sheet.png", PNG, data);
-   Planet planet("../shaders/user.vert", "../shaders/user.frag", "../textures/planet.png", PNG, 5.0f);
+   Texture_sheet coord;
+   coord = {0, 1};
+   User user("../shaders/user.vert", "../shaders/user.frag", &tex_sheet, coord);
+   coord = {0, 3};
+   Planet planet("../shaders/user.vert", "../shaders/user.frag", &tex_sheet, coord);
    Object star("../shaders/standard.vert", "../shaders/standard.frag", NONE);
    Object dot("../shaders/standard.vert", "../shaders/standard.frag", Image::NONE); 
    Galaxy galaxy(&dot);
-   Black_hole hole;
+   coord = {0, 2};
+   Black_hole hole("../shaders/user.vert", "../shaders/user.frag", &tex_sheet, coord);
 
 #ifdef COLLISION_PROTOTYPE
    global_states.zoom=1.0f;

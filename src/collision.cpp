@@ -9,13 +9,13 @@ Collision_prototype::Collision_prototype(collision_type t, object_type x, object
 {
    if (obj1_t == circle){
       obj1.add_shaders("../shaders/circle.vert", "../shaders/circle.frag");
-      obj1.add_texture("../textures/circle.png", PNG);
+      obj1.set_type(LINES);
    } else {
       obj1.add_shaders("../shaders/standard.vert", "../shaders/standard.frag");
-      obj1.add_texture("", LINES);
+      obj1.set_type(LINES);
    }
    obj2.add_shaders("../shaders/standard.vert", "../shaders/standard.frag");
-   obj2.add_texture("", LINES);
+   obj2.set_type(LINES);
 }
 
 

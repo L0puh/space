@@ -35,8 +35,8 @@ namespace orbit {
 
 class Planet: public Object{
    public:
-      Planet(std::string src_vertex, std::string src_fragment, std::string src_texture, Image img_type, float p_radius): 
-         Object(src_vertex, src_fragment, src_texture, img_type){ radius = p_radius;}
+      Planet(std::string src_vertex, std::string src_fragment, Texture *tex_sheet, Texture_sheet coord): 
+         Object(src_vertex, src_fragment, tex_sheet, coord){ radius = 10.0f;}
    public:
       uint ID;
       float radius;
