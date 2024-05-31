@@ -2,7 +2,6 @@
 #include "game.h"
 #include "state.h"
 #include "glm/ext/matrix_clip_space.hpp"
-#include "utils.h"
 #include <GLFW/glfw3.h>
 #include <glm/ext/matrix_transform.hpp>
 #include <string>
@@ -143,7 +142,7 @@ glm::mat4 Object::get_projection(float zoom){
 
 
 void Black_hole::collide(Camera *camera, glm::vec2 pos_to, glm::vec2 size){
-   if (!AABB_collision({pos, size, size.x/sqr_2}, {camera->pos, {2.0f, 2.0f}, 1.0f})){
+   if (!AABB_collision({pos+camera->pos, size, size.x/sqr_2}, {camera->pos, {2.0f, 2.0f}, 1.0f})){
       camera->pos = {pos_to, 0.0f};
     }
 }

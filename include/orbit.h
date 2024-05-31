@@ -95,7 +95,7 @@ class Galaxy{
       bool get_star(float x, float y);
 
       void generate_galaxy_sphere(int scale, int amount, std::vector<glm::vec2>*);
-      void draw_galaxy_sphere(std::vector<glm::vec2>);
+      void draw_galaxy_sphere(std::vector<glm::vec2>, glm::vec2 center_pos);
       
       void draw_stars();
 };

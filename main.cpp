@@ -95,10 +95,13 @@ int main() {
       map.update(&objs);
 
       hole.translate_object(glm::vec2(8.0f, 8.0f) - glm::vec2(camera.pos.x, camera.pos.y)); 
+      hole.set_pos({8.0f, 8.0f, 0.0f});
       hole.scale_object({4.0f, 2.0f});
 
-      planet.translate_object(planet.pos - camera.pos);
+      planet.translate_object(glm::vec3(0.0f, 0.0f, 0.0f) - camera.pos);
+      planet.set_pos({0.0f, 0.0f, 0.0f});
       planet.scale_object({1.f, 1.f});
+
       objs[0] = {planet.pos, planet.size, planet.size.x/sqr_2};
 
       camera.get_movement(deltatime, user.size, objs); 
@@ -113,8 +116,9 @@ int main() {
       utils::debug_console();
 
       //objects.draw(); 
+      planet.draw(planet.model, camera.view);
       galaxy.generate_galaxy_sphere(4000, stars.size(), &stars);
-      galaxy.draw_galaxy_sphere(stars);
+      galaxy.draw_galaxy_sphere(stars, glm::vec2(303.0f, 303.0f));
 
       /* galaxy.generate_galaxy_procedural(); */
       

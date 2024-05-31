@@ -12,7 +12,8 @@ namespace orbit {
    void update_plantes(planet_object *p, std::vector<planet_object> planets, size_t amount){
       p->pos.x = sin(glfwGetTime()*global_states.timestep) / p->mass * p->velocity.y * p->size.x * global_states.gravity;
       p->pos.y = cos(glfwGetTime()*global_states.timestep) / p->mass * p->velocity.x * p->size.y * global_states.gravity;
-      p->orbit.push_back(p->pos);
+      if (p->orbit.size() < 2*glm::pi<float>()*p->radius)
+         p->orbit.push_back(p->pos);
    }
 
    bool check_collisions(std::vector<planet_object> planets, collider user, size_t amount){
@@ -27,7 +28,7 @@ namespace orbit {
       for (int i=0; i < amount; i++){
          draw_orbit(planets[i].orbit, dot);
          planet->update();
-         planet->translate_object(planets[i].pos - glm::vec2(global_states.camera->pos.x, global_states.camera->pos.y));
+         planet->translate_object(planets[i].pos - glm::vec2(global_states.camera->pos));
          planet->scale_object(planets[i].size);
          planet->draw(planet->model, global_states.camera->view);
       }
@@ -36,7 +37,7 @@ namespace orbit {
    void draw_orbit(std::vector<glm::vec2> orbit, Object *dot){
       for (int i = 0; i < orbit.size(); i++){
          dot->update();
-         dot->translate_object(orbit[i] - glm::vec2(global_states.camera->pos.x, global_states.camera->pos.y));
+         dot->translate_object(orbit[i] - glm::vec2(global_states.camera->pos));
          dot->draw(dot->model, global_states.camera->view, red);
       }
    }
@@ -101,10 +102,10 @@ void Galaxy::generate_galaxy_sphere(int scale, int amount, std::vector<glm::vec2
 void Galaxy::draw_stars(){
    generate_objs(*star, global_states.stars_amount, object_type::dot);
 }
-void Galaxy::draw_galaxy_sphere(std::vector<glm::vec2> stars){
+void Galaxy::draw_galaxy_sphere(std::vector<glm::vec2> stars, glm::vec2 center_pos){
    for (int i=0; i<stars.size();i++) {
       star->update();
-      star->translate_object(stars[i] - glm::vec2(global_states.camera->pos.x, global_states.camera->pos.y));
+      star->translate_object((stars[i]+center_pos) - glm::vec2(global_states.camera->pos.x, global_states.camera->pos.y));
       star->draw(star->model, global_states.camera->view, white);
    }
 }
