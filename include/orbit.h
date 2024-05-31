@@ -55,12 +55,7 @@ class Map{
       std::vector<planet_object> planets;
       int seed = static_cast <unsigned> (time(0));
    public:
-      float random_float(int start, int scale);
-      boarder set_boarders(glm::vec2);
-      void generate_objs(Object &obj, float amount, object_type type);
-      void generate_galaxy(int scale, int amount, std::vector<glm::vec2>*);
-      void draw_galaxy(std::vector<glm::vec2>);
-      void draw_stars();
+      static boarder set_boarders(glm::vec2);
       void draw_planets();
       void update(std::vector<collider> *objs){
          for (int i = 1; i < amount_planets; i++)
@@ -79,7 +74,7 @@ class Galaxy{
       bool is_star=false;
       float offset_up=0.0f;
       float offset_right=0.0f;
-      uint32_t n_seed = 0;
+      uint32_t n_seed = 0, seed = random_int(1, 100);
       double rnd_double(double min, double max){
          return ((double)rnd()/(double)(0x7FFFFFFF)) * (max-min) + min;
       }
@@ -95,8 +90,14 @@ class Galaxy{
          uint32_t m2 = (tmp >> 32) ^ tmp;
          return m2;
       }
-      void generate_galaxy();
-      bool get_star(uint32_t x, uint32_t y);
+      void generate_objs(Object &obj, float amount, object_type type);
+      void generate_galaxy_procedural();
+      bool get_star(float x, float y);
+
+      void generate_galaxy_sphere(int scale, int amount, std::vector<glm::vec2>*);
+      void draw_galaxy_sphere(std::vector<glm::vec2>);
+      
+      void draw_stars();
 };
 
 

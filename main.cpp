@@ -52,6 +52,7 @@ int main() {
    Black_hole hole;
 
 #ifdef COLLISION_PROTOTYPE
+   global_states.zoom=1.0f;
    Collision_prototype coll_p(Collision_prototype::AABB_AABB, square, square);
    coll_p.update_prototype();
 #endif
@@ -62,7 +63,7 @@ int main() {
    global_states.camera = &camera;
    orbit::run_orbit_prototype();
 #endif
-   camera.set_position({1.0f, 1.0f, 0.0f});
+   camera.set_init_position();
    user.pos = camera.pos;
    
 
@@ -77,7 +78,7 @@ int main() {
    size_t amount_planets = 10;
    std::vector<collider> objs(amount_planets); //FIXME
    Map map(&objs, amount_planets);
-   std::vector<glm::vec2> stars(6000);
+   std::vector<glm::vec2> stars(7000);
 
 #ifndef COLLISION_PROTOTYPE 
 #ifndef ORBIT_PROTOTYPE
@@ -93,16 +94,16 @@ int main() {
       star.update();
       map.update(&objs);
 
-      hole.translate_object({8.0f, 8.0f}); 
+      hole.translate_object(glm::vec2(8.0f, 8.0f) - glm::vec2(camera.pos.x, camera.pos.y)); 
       hole.scale_object({4.0f, 2.0f});
 
-      planet.translate_object(planet.pos);
+      planet.translate_object(planet.pos - camera.pos);
       planet.scale_object({1.f, 1.f});
       objs[0] = {planet.pos, planet.size, planet.size.x/sqr_2};
 
       camera.get_movement(deltatime, user.size, objs); 
       hole.collide(&camera, {1.0f, 2.0f}, user.size);
-      user.translate_object(camera.pos);
+      user.translate_object(camera.inital_pos);
       user.scale_object(user.size);
       user.rotate_object(camera.rotation, glm::vec3(0.0f, 0.0f, 1.0f));
       
@@ -112,11 +113,12 @@ int main() {
       utils::debug_console();
 
       //objects.draw(); 
-      /* map.draw_stars(); */
-      /* map.generate_galaxy(1000, stars.size(), &stars); */
-      /* map.draw_galaxy(stars); */
-      galaxy.generate_galaxy();
-      /* map.draw_planets(); */
+      galaxy.generate_galaxy_sphere(4000, stars.size(), &stars);
+      galaxy.draw_galaxy_sphere(stars);
+
+      /* galaxy.generate_galaxy_procedural(); */
+      
+      map.draw_planets();
       hole.draw(hole.model, camera.view);
       user.draw(user.model, camera.view);
 
@@ -127,6 +129,7 @@ int main() {
       global_states.user = &user;
       global_states.window = window;
       global_states.w_size = get_window_size(window);
+      global_states.deltatime = deltatime;
    }
 #endif 
 #endif 

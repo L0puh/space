@@ -17,7 +17,8 @@ struct global {
    float zoom = 10.0f;
    float timestep = 0.5f;
    float gravity = 10.f;
-   float stars_amount = 0.8f;
+   float stars_amount = 1.0f;
+   float deltatime = 0.0f;
 };
 
 extern global global_states;

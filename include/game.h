@@ -113,6 +113,8 @@ inline window_size get_window_size(GLFWwindow *window){
 
 GLFWwindow* init_window(const int width, const int height);
 void shut_down();
+float random_float(int start, int scale);
+int random_int(int start, int scale);
 void set_debug_mode();
 void frame_buffer_size(GLFWwindow *window, int width, int height);
 std::string load_from_file(const std::string& src);
@@ -207,10 +209,15 @@ class Camera {
       float speed = 1.2, rotation_speed = 1.2, rotation = 0.0f;
       float map_offset = 60.0f;
       glm::vec3 pos = glm::vec3(0.0f); 
+      glm::vec3 inital_pos = glm::vec3(15.0, 15.0, 0.0f);
       glm::mat4 view = glm::mat4(1.0f);
    public: 
       void update();
       void set_position(glm::vec3 camera_pos) { pos = camera_pos; }
+      void set_init_position() {
+         inital_pos = {map_offset/2.0f, map_offset/2.0f, 0.0f};
+         view = glm::translate(glm::mat4(1.0f), inital_pos);
+      }
       void get_movement(float deltatime, glm::vec2 user_sz, std::vector<collider>);
       bool check_collisions(std::vector<collider> objs, glm::vec2 user_size, glm::vec2 pos);
       //void zoom(float x); TODO

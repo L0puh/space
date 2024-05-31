@@ -3,9 +3,10 @@
 #include "glm/ext/matrix_transform.hpp"
 #include <vector>
 
+
 void Camera::update(){
-   view = glm::translate(glm::mat4(1.0f), pos);
-   
+   set_init_position();
+
    view = glm::translate(view, {0.5 * 0.2, 0.5*0.2, 0.0f}); //FIXME: user size 
    view = glm::rotate(view, rotation, glm::vec3(0.0f, 0.0f, 1.0f));
    view = glm::translate(view, {-0.5 * 0.2, -0.5*0.2, 0.0f});

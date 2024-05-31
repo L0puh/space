@@ -12,7 +12,6 @@ namespace orbit {
    void update_plantes(planet_object *p, std::vector<planet_object> planets, size_t amount){
       p->pos.x = sin(glfwGetTime()*global_states.timestep) / p->mass * p->velocity.y * p->size.x * global_states.gravity;
       p->pos.y = cos(glfwGetTime()*global_states.timestep) / p->mass * p->velocity.x * p->size.y * global_states.gravity;
-
       p->orbit.push_back(p->pos);
    }
 
@@ -28,7 +27,7 @@ namespace orbit {
       for (int i=0; i < amount; i++){
          draw_orbit(planets[i].orbit, dot);
          planet->update();
-         planet->translate_object(planets[i].pos);
+         planet->translate_object(planets[i].pos - glm::vec2(global_states.camera->pos.x, global_states.camera->pos.y));
          planet->scale_object(planets[i].size);
          planet->draw(planet->model, global_states.camera->view);
       }
@@ -37,7 +36,7 @@ namespace orbit {
    void draw_orbit(std::vector<glm::vec2> orbit, Object *dot){
       for (int i = 0; i < orbit.size(); i++){
          dot->update();
-         dot->translate_object(orbit[i]);
+         dot->translate_object(orbit[i] - glm::vec2(global_states.camera->pos.x, global_states.camera->pos.y));
          dot->draw(dot->model, global_states.camera->view, red);
       }
    }
@@ -70,24 +69,12 @@ namespace orbit {
       }
    }
 }
-void Galaxy::generate_galaxy(){
-   if (Input::is_pressed(GLFW_KEY_UP)){
-      offset_up+=global_states.camera->speed;
-   }
-   if (Input::is_pressed(GLFW_KEY_DOWN)){
-      offset_up-=global_states.camera->speed;
-   }
-   if (Input::is_pressed(GLFW_KEY_RIGHT)){
-      offset_right+=global_states.camera->speed;
-   }
-   if (Input::is_pressed(GLFW_KEY_LEFT)){
-      offset_right-=global_states.camera->speed;
-   }
+void Galaxy::generate_galaxy_procedural(){
    int max = global_states.camera->map_offset; 
    for (float x=0.0f; x < max; x += global_states.stars_amount){
       for (float y=0.0f; y < max; y += global_states.stars_amount){
-         uint32_t seed1 = offset_right + x;
-         uint32_t seed2 = offset_up + y;
+         float seed1 = global_states.camera->pos.x +  x;
+         float seed2 = global_states.camera->pos.y +  y;
          bool is_star = get_star(seed1, seed2);
          if (is_star){
             star->update();
@@ -97,7 +84,50 @@ void Galaxy::generate_galaxy(){
       }
    }
 }
-bool Galaxy::get_star(uint32_t x, uint32_t y){
-   n_seed = (x & 0xFFFF) << 16 | (y & 0xFFFF);
-   return rnd_int(0, 10) == 1;
+bool Galaxy::get_star(float x, float y){
+   n_seed = ((int)x & 0xFFFF) << 16 | ((int)y & 0xFFFF);
+   return rnd_int(0, 20) == 1;
+}
+void Galaxy::generate_galaxy_sphere(int scale, int amount, std::vector<glm::vec2> *stars){ // sphere
+   srand(seed);
+   for (int i=0; i < amount; i++){
+      float distance = random_float(1.0f, scale);
+      float angle = random_float(1.0f, scale) * 2.f * glm::pi<float>();
+      float pos_x = cos(angle) * distance;
+      float pos_y = sin(angle) * distance;
+      stars->at(i) = {pos_x, pos_y};
+   }
+}
+void Galaxy::draw_stars(){
+   generate_objs(*star, global_states.stars_amount, object_type::dot);
+}
+void Galaxy::draw_galaxy_sphere(std::vector<glm::vec2> stars){
+   for (int i=0; i<stars.size();i++) {
+      star->update();
+      star->translate_object(stars[i] - glm::vec2(global_states.camera->pos.x, global_states.camera->pos.y));
+      star->draw(star->model, global_states.camera->view, white);
+   }
+}
+void Galaxy::generate_objs(Object &obj, float amount, object_type type){
+   boarder cur_boarder;
+   cur_boarder = Map::set_boarders(global_states.camera->pos);
+   global_states.cur_boarder = cur_boarder;
+   srand(seed);
+   for ( float i=cur_boarder.min_x; i <= cur_boarder.max_x; i+=amount){
+      for (float j=cur_boarder.min_y; j <= cur_boarder.max_y; j+=amount){
+         bool is_star;
+         if (type == object_type::dot) is_star = rand() % 256 < 32;
+         else is_star = rand() % 1024 < 15;
+         if (is_star) {
+            obj.update();
+            obj.translate_object(glm::vec2(i, j));
+            if (type == object_type::dot)
+               obj.draw(obj.model, global_states.camera->view, white);
+            else 
+               obj.draw(obj.model, global_states.camera->view);
+         }
+      }
+   }
+   global_states.cur_boarder = cur_boarder;
+
 }

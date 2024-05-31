@@ -109,4 +109,10 @@ namespace Input {
    }
 };
 
+float random_float(int start, int scale){
+   return start + (static_cast <float> (rand()) / static_cast <float> (RAND_MAX/scale));
+}
 
+int random_int(int start, int scale){
+   return start + (static_cast <int> (rand()) / static_cast <int> (RAND_MAX/scale));
+}
