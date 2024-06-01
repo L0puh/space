@@ -69,7 +69,7 @@ int main() {
 
    size_t amount_planets = 10;
    std::vector<collider> objs(amount_planets); //FIXME
-   Map map(&objs, amount_planets);
+   Map map(&objs, amount_planets, &planet);
    std::vector<glm::vec2> stars(7000);
 
 #ifndef COLLISION_PROTOTYPE 

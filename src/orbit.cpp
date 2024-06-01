@@ -12,7 +12,7 @@ namespace orbit {
    void update_plantes(planet_object *p, std::vector<planet_object> planets, size_t amount){
       p->pos.x = sin(glfwGetTime()*global_states.timestep) / p->mass * p->velocity.y * p->size.x * global_states.gravity;
       p->pos.y = cos(glfwGetTime()*global_states.timestep) / p->mass * p->velocity.x * p->size.y * global_states.gravity;
-      if (p->orbit.size() < 2*glm::pi<float>()*p->size.x/sqr_2)
+      if (p->orbit.size() < 100*glm::pi<float>()*p->radius)
          p->orbit.push_back(p->pos);
    }
 

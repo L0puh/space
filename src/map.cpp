@@ -24,9 +24,9 @@ boarder Map::set_boarders(glm::vec2 pos){
 }
 
 
-Map::Map(std::vector<collider> *objs, size_t amount_planets): 
+Map::Map(std::vector<collider> *objs, size_t amount_planets, Planet* planet): 
    amount_planets(amount_planets),
-   planet("../shaders/user.vert", "../shaders/user.frag", "../textures/planet.png", PNG, 5.0f),
+   planet(planet),
    dot("../shaders/standard.vert", "../shaders/standard.frag", Image::NONE),
    planets(amount_planets)
 {
@@ -36,7 +36,7 @@ Map::Map(std::vector<collider> *objs, size_t amount_planets):
    for (int i = 1; i < amount_planets; i++){
       float vel = random_float(0, 80);
       float sz = random_float(1, 10);
-      planets[i] = {random_float(20, 500), 
+      planets[i] = {sz, 
          {random_float(0, 250), random_float(0, 250)},
          {vel, vel}, random_float(0, 7), 
          {sz, sz}, 10.0f};
@@ -47,6 +47,6 @@ Map::Map(std::vector<collider> *objs, size_t amount_planets):
 }
 
 void Map::draw_planets(){
-   orbit::draw_planets(planets, amount_planets, &planet, &dot);
+   orbit::draw_planets(planets, amount_planets, planet, &dot);
 }
 

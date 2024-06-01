@@ -47,10 +47,10 @@ class Planet: public Object{
 
 class Map{
    public:
-      Map(std::vector<collider> *objs, size_t amount);
+      Map(std::vector<collider> *objs, size_t amount, Planet *planet);
    private:
       size_t amount_planets = 4; 
-      Planet planet;
+      Planet *planet;
       Object dot;
       std::vector<planet_object> planets;
       int seed = static_cast <unsigned> (time(0));
