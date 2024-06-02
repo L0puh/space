@@ -35,7 +35,7 @@ namespace utils {
                                        sin(camera->rotation), 
                                        cos(camera->rotation));
                                                                
-         ImGui::SliderFloat("SPEED", &camera->speed, 0, 10.0f, "%.7f", 0);
+         ImGui::SliderFloat("SPEED", &camera->speed, 0, 20.0f, "%.7f", 0);
          ImGui::SliderFloat("MAP OFFSET(boarder)", &camera->map_offset, 0, 50.0f, "%.8f", 0);
          ImGui::SliderFloat("ROTATION", &camera->rotation, 0, 10.0f, "%.4f", 0);
          ImGui::SliderFloat("ZOOM", &global_states.zoom, 1.0f, 4000.0f, "%.4f", 0);

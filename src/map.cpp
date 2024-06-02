@@ -24,14 +24,15 @@ boarder Map::set_boarders(glm::vec2 pos){
 }
 
 
-Map::Map(std::vector<collider> *objs, size_t amount_planets, Planet* planet): 
+Map::Map(std::vector<collider> *objs, size_t amount_planets, Planet* planet, glm::vec2 galaxy_center): 
    amount_planets(amount_planets),
    planet(planet),
    dot("../shaders/standard.vert", "../shaders/standard.frag", Image::NONE),
-   planets(amount_planets)
+   planets(amount_planets),
+   galaxy_center(galaxy_center)
 {
   
-   planets[0] = {550.f, {0.0f, 0.0f}, {0.0f, 0.0f}, 15.2f, {12.2, 12.2}, 2.0f};
+   planets[0] = {550.f, galaxy_center, {0.0f, 0.0f}, 15.2f, {20.2, 20.2}, 2.0f};
    srand(seed);
    for (int i = 1; i < amount_planets; i++){
       float vel = random_float(0, 80);
@@ -49,4 +50,5 @@ Map::Map(std::vector<collider> *objs, size_t amount_planets, Planet* planet):
 void Map::draw_planets(){
    orbit::draw_planets(planets, amount_planets, planet, &dot);
 }
+
 

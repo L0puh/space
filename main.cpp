@@ -39,7 +39,7 @@ int main() {
    Planet planet("../shaders/user.vert", "../shaders/user.frag", &tex_sheet, coord);
    Object star("../shaders/standard.vert", "../shaders/standard.frag", NONE);
    Object dot("../shaders/standard.vert", "../shaders/standard.frag", Image::NONE); 
-   Galaxy galaxy(&dot);
+   Galaxy galaxy(&dot, {300.0f, 4.0f}, 100);
    coord = {0, 2};
    Black_hole hole("../shaders/user.vert", "../shaders/user.frag", &tex_sheet, coord);
 
@@ -66,10 +66,9 @@ int main() {
    global_states.window = window;
    global_states.w_size = get_window_size(window);
 
-
    size_t amount_planets = 10;
    std::vector<collider> objs(amount_planets); //FIXME
-   Map map(&objs, amount_planets, &planet);
+   Map map(&objs, amount_planets, &planet, galaxy.center_pos);
    std::vector<glm::vec2> stars(7000);
 
 #ifndef COLLISION_PROTOTYPE 
@@ -87,34 +86,27 @@ int main() {
       map.update(&objs);
 
       hole.translate_object(glm::vec2(8.0f, 8.0f) - glm::vec2(camera.pos.x, camera.pos.y)); 
-      hole.set_pos({8.0f, 8.0f, 0.0f});
       hole.scale_object({4.0f, 2.0f});
 
-      planet.translate_object(glm::vec3(0.0f, 0.0f, 0.0f) - camera.pos);
-      planet.set_pos({0.0f, 0.0f, 0.0f});
-      planet.scale_object({1.f, 1.f});
-
-      objs[0] = {planet.pos, planet.size, planet.size.x/sqr_2};
-
       camera.get_movement(deltatime, user.size, objs); 
-      hole.collide(&camera, {1.0f, 2.0f}, user.size);
+      hole.collide(&camera, galaxy.center_pos-map.get_planet(0).size, user.size);
       user.translate_object(camera.inital_pos);
       user.scale_object(user.size);
       user.rotate_object(camera.rotation, glm::vec3(0.0f, 0.0f, 1.0f));
+      user.set_pos(camera.pos);
       
+      printf("%d\n", galaxy.is_out(&user));
 
       glClearBufferfv(GL_COLOR, 0, bg_color);
       utils::debug_new_frame();
       utils::debug_console();
 
       //objects.draw(); 
-      planet.draw(planet.model, camera.view);
-      galaxy.generate_galaxy_sphere(4000, stars.size(), &stars);
-      galaxy.draw_galaxy_sphere(stars, glm::vec2(303.0f, 303.0f));
-
-      /* galaxy.generate_galaxy_procedural(); */
-      
+      /* galaxy.generate_galaxy_sphere(stars.size(), &stars); */
+      /* galaxy.draw_galaxy_sphere(stars); */
       map.draw_planets();
+
+      galaxy.generate_galaxy_procedural();
       hole.draw(hole.model, camera.view);
       user.draw(user.model, camera.view);
 

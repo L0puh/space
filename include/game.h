@@ -260,7 +260,7 @@ class Object {
       static void scale_object(glm::mat4 *model, glm::vec2 scaler);
       static void translate_object(glm::mat4 *model, glm::vec2 pos);
       static void rotate_object(glm::mat4 *model, float angle, glm::vec3 pos);
-      void set_pos(glm::vec3 pos) { pos = pos; }
+      void set_pos(glm::vec3 pos) { this->pos = pos; }
 
       void scale_object(glm::vec2 scaler){
          model = glm::scale(model, glm::vec3(scaler.x, scaler.y, 0.2f));
@@ -288,6 +288,7 @@ class User: public Object {
    public:
       User(std::string src_vertex, std::string src_fragment, Texture *tex_sheet, Texture_sheet coord):
       Object(src_vertex, src_fragment, tex_sheet, coord){};
+      void set_pos(glm::vec2 pos) { this->pos = pos; }
 };
 
 class Black_hole: public Object {

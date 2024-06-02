@@ -75,7 +75,6 @@ Object::Object(std::string src_vertex, std::string src_fragment, Texture *textur
 
 Object::~Object(){
    shader.delete_shader();
-   tex_sheet->delete_texture();
 }
 
 void Object::scale_object(glm::mat4 *model, glm::vec2 scaler){

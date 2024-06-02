@@ -9,10 +9,12 @@
 
 
 namespace orbit {
-   void update_plantes(planet_object *p, std::vector<planet_object> planets, size_t amount){
+   void update_plantes(planet_object *p, std::vector<planet_object> planets, size_t amount, glm::vec2 center){
       p->pos.x = sin(glfwGetTime()*global_states.timestep) / p->mass * p->velocity.y * p->size.x * global_states.gravity;
+      p->pos.x += center.x; 
       p->pos.y = cos(glfwGetTime()*global_states.timestep) / p->mass * p->velocity.x * p->size.y * global_states.gravity;
-      if (p->orbit.size() < 100*glm::pi<float>()*p->radius)
+      p->pos.y += center.y; 
+      if (p->orbit.size() < MAX_ORBIT*p->radius)
          p->orbit.push_back(p->pos);
    }
 
@@ -66,7 +68,7 @@ namespace orbit {
          utils::debug_console(&planets);
      
          for (int i = 1; i < amount_planets; i++)
-            update_plantes(&planets[i], planets, sizeof(planets));
+            update_plantes(&planets[i], planets, sizeof(planets), {0.0f, 0.0f});
          draw_planets(planets, amount_planets, &planet, &dot);
 
          utils::debug_console_render();
@@ -94,7 +96,7 @@ bool Galaxy::get_star(float x, float y){
    n_seed = ((int)x & 0xFFFF) << 16 | ((int)y & 0xFFFF);
    return rnd_int(0, 20) == 1;
 }
-void Galaxy::generate_galaxy_sphere(int scale, int amount, std::vector<glm::vec2> *stars){ // sphere
+void Galaxy::generate_galaxy_sphere(int amount, std::vector<glm::vec2> *stars){ // sphere
    srand(seed);
    for (int i=0; i < amount; i++){
       float distance = random_float(1.0f, scale);
@@ -107,7 +109,7 @@ void Galaxy::generate_galaxy_sphere(int scale, int amount, std::vector<glm::vec2
 void Galaxy::draw_stars(){
    generate_objs(*star, global_states.stars_amount, object_type::dot);
 }
-void Galaxy::draw_galaxy_sphere(std::vector<glm::vec2> stars, glm::vec2 center_pos){
+void Galaxy::draw_galaxy_sphere(std::vector<glm::vec2> stars){
    for (int i=0; i<stars.size();i++) {
       star->update();
       star->translate_object((stars[i]+center_pos) - glm::vec2(global_states.camera->pos.x, global_states.camera->pos.y));
