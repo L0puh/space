@@ -38,7 +38,6 @@ void Texture::load_texture(){
 }
 
 void Texture::delete_texture(){
-   utils::log("deleted texture:", std::to_string(texture_id));
    glDeleteTextures(1, &texture_id);
 }
 

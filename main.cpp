@@ -32,16 +32,13 @@ int main() {
   
    Texture tex_sheet("../textures/texture_sheet.png", PNG);
    tex_sheet.load_texture();
-   Texture_sheet coord;
-   coord = {0, 1};
-   User user("../shaders/user.vert", "../shaders/user.frag", &tex_sheet, coord);
-   coord = {0, 3};
-   Planet planet("../shaders/user.vert", "../shaders/user.frag", &tex_sheet, coord);
+
+   User user("../shaders/user.vert", "../shaders/user.frag", &tex_sheet);
+   Planet planet("../shaders/user.vert", "../shaders/user.frag", &tex_sheet); 
    Object star("../shaders/standard.vert", "../shaders/standard.frag", NONE);
    Object dot("../shaders/standard.vert", "../shaders/standard.frag", Image::NONE); 
-   Galaxy galaxy(&dot, {300.0f, 4.0f}, 100);
-   coord = {0, 2};
-   Black_hole hole("../shaders/user.vert", "../shaders/user.frag", &tex_sheet, coord);
+   Black_hole hole("../shaders/user.vert", "../shaders/user.frag", &tex_sheet);
+   Camera camera;
 
 #ifdef COLLISION_PROTOTYPE
    global_states.zoom=1.0f;
@@ -49,15 +46,13 @@ int main() {
    coll_p.update_prototype();
 #endif
 
-   Camera camera;
 #ifdef ORBIT_PROTOTYPE
    camera.view = glm::mat4(1.0f);
    global_states.camera = &camera;
-   orbit::run_orbit_prototype();
+   orbit::run_orbit_prototype(&planet, &dot);
 #endif
    camera.set_init_position();
    user.pos = camera.pos;
-   
 
    float last_frame = 0.0f, deltatime;
 
@@ -68,8 +63,10 @@ int main() {
 
    size_t amount_planets = 10;
    std::vector<collider> objs(amount_planets); //FIXME
-   Map map(&objs, amount_planets, &planet, galaxy.center_pos);
    std::vector<glm::vec2> stars(7000);
+   
+   Galaxy galaxy(amount_planets, {300.0f, 4.0f}, 1000, &star, &planet);
+   galaxy.init_map(&objs);
 
 #ifndef COLLISION_PROTOTYPE 
 #ifndef ORBIT_PROTOTYPE
@@ -83,30 +80,28 @@ int main() {
       user.update();
       hole.update();
       star.update();
-      map.update(&objs);
+      galaxy.update(&objs);
 
       hole.translate_object(glm::vec2(8.0f, 8.0f) - glm::vec2(camera.pos.x, camera.pos.y)); 
       hole.scale_object({4.0f, 2.0f});
 
       camera.get_movement(deltatime, user.size, objs); 
-      hole.collide(&camera, galaxy.center_pos-map.get_planet(0).size, user.size);
+      hole.collide(&camera, galaxy.center_pos-galaxy.get_planet(0).size, user.size);
       user.translate_object(camera.inital_pos);
       user.scale_object(user.size);
       user.rotate_object(camera.rotation, glm::vec3(0.0f, 0.0f, 1.0f));
       user.set_pos(camera.pos);
-      
-      printf("%d\n", galaxy.is_out(&user));
 
       glClearBufferfv(GL_COLOR, 0, bg_color);
       utils::debug_new_frame();
       utils::debug_console();
 
       //objects.draw(); 
-      /* galaxy.generate_galaxy_sphere(stars.size(), &stars); */
-      /* galaxy.draw_galaxy_sphere(stars); */
-      map.draw_planets();
+      
+      galaxy.generate_galaxy_sphere(stars.size(), &stars);
+      galaxy.draw_galaxy_sphere(stars);
+      galaxy.draw_planets();
 
-      galaxy.generate_galaxy_procedural();
       hole.draw(hole.model, camera.view);
       user.draw(user.model, camera.view);
 

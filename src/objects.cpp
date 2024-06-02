@@ -91,7 +91,7 @@ void Object::rotate_object(glm::mat4 *model, float angle, glm::vec3 pos){
 void Object::draw(glm::mat4 &model, glm::mat4 view, Texture texture){
    glm::mat4 proj = get_projection(global_states.zoom);
    if (tex_type != NONE && tex_type != LINES)
-      tex_sheet->use();
+      texture.use();
    shader.use();
    shader.set_matrix4fv("proj", proj);
    shader.set_matrix4fv("view", view);
@@ -117,6 +117,7 @@ void Object::draw(glm::mat4 &model, glm::mat4 view){
       vertex.draw(GL_TRIANGLES, LEN(indices_square));
    else
       vertex.draw(GL_TRIANGLES, LEN(indices_square));
+   tex_sheet->unuse();
 }
 
 void Object::draw(glm::mat4 &model, glm::mat4 view, glm::vec3 color){
@@ -134,6 +135,7 @@ void Object::draw(glm::mat4 &model, glm::mat4 view, glm::vec3 color){
       vertex.draw(GL_TRIANGLES, LEN(indices_square));
    else
       vertex.draw(GL_TRIANGLES, LEN(indices_square));
+   tex_sheet->unuse();
 }
 
 glm::mat4 Object::get_projection(float zoom){

@@ -242,14 +242,15 @@ class Object {
       Object(std::string src_vertex, std::string src_fragment, Texture *texture_sheet, Texture_sheet coord);
       Object(std::string src_vertex, std::string src_fragment, Image img_type);
       ~Object();
+   public:
       glm::mat4 model = glm::mat4(1.0f);
       glm::vec2 size = glm::vec3(1.0f, 1.0f, 0.0f);
       glm::vec3 pos = glm::vec3(0.0f);
       Shader shader;
-      Image tex_type;
-      Texture *tex_sheet;
       Vertex vertex;
       Data data;
+      Image tex_type;
+      Texture *tex_sheet;
    public:
       glm::mat4 get_projection(float zoom);
       void add_shaders(std::string src_vertex, std::string src_fragment);
@@ -273,7 +274,6 @@ class Object {
       void rotate_object(float angle, glm::vec3 pos){
          model = glm::rotate(model, angle, pos);
       }
-
       void draw(glm::mat4 &model, glm::mat4 view);
       void draw(glm::mat4 &model, glm::mat4 view, Texture texture);
       void draw(glm::mat4 &model, glm::mat4 view, glm::vec3 color);
@@ -286,15 +286,15 @@ class User: public Object {
       glm::vec2 size = {0.2, 0.2};
       glm::vec2 pos = {1.0, 1.0};
    public:
-      User(std::string src_vertex, std::string src_fragment, Texture *tex_sheet, Texture_sheet coord):
-      Object(src_vertex, src_fragment, tex_sheet, coord){};
+      User(std::string src_vertex, std::string src_fragment, Texture *tex_sheet, Texture_sheet coord = {0, 1}):
+      Object(src_vertex, src_fragment, tex_sheet, {0, 1}){};
       void set_pos(glm::vec2 pos) { this->pos = pos; }
 };
 
 class Black_hole: public Object {
    public:
-      Black_hole(std::string src_vertex, std::string src_fragment, Texture* tex_sheet, Texture_sheet coord): 
-         Object(src_vertex, src_fragment, tex_sheet, coord){}
+      Black_hole(std::string src_vertex, std::string src_fragment, Texture* tex_sheet, Texture_sheet coord = {0, 2}): 
+         Object(src_vertex, src_fragment, tex_sheet, {0, 2}){}
    public:
       void collide(Camera *camera, glm::vec2 pos_to, glm::vec2 size);
 

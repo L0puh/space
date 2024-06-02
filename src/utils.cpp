@@ -41,7 +41,7 @@ namespace utils {
          ImGui::SliderFloat("ZOOM", &global_states.zoom, 1.0f, 4000.0f, "%.4f", 0);
          ImGui::SliderFloat("GRAVITY", &global_states.gravity, 1.0f, 20.0f, "%.4f", 0);
          ImGui::SliderFloat("STARS", &global_states.stars_amount, 0.00001f, 1.0f, "%.9f", 0);
-         ImGui::SliderFloat("TIMESTAMP", &global_states.timestep, 0.00001f, 1.0f, "%.9f", 0);
+         ImGui::SliderFloat("TIMESTAMP", &global_states.timestep, 0.00001f, 100.0f, "%.9f", 0);
          ImGui::SliderInt("HP", &user->HP, 0, 100, "%d", 0);
          ImGui::SliderInt("EXP", &user->EXP, 0, 100, "%d", 0);
       }

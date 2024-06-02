@@ -40,7 +40,6 @@ void Shader::create_shader(uint *shader, const std::string& src, GLuint type){
 
 void Shader::delete_shader(){
    glDeleteProgram(shader_id);
-   utils::log("deleted shader", std::to_string(shader_id));
 }
 
 const int Shader::get_location(const std::string& name){
