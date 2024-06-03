@@ -127,14 +127,20 @@ void Galaxy::generate_black_holes(int amount, std::vector<black_hole_object> *bl
       float pos_y = random_float(1.0f, scale);
       float pos_to_x = random_float(1.0f, scale);
       float pos_to_y = random_float(1.0f, scale);
-      float size = random_float(4.0f, 10.0f);
+      float size = random_float(6.0f, 20.0f);
       black_holes->at(i).pos = {pos_x, pos_y};
       black_holes->at(i).to = {pos_to_x, pos_to_y};
       black_holes->at(i).size = {size, size/2};
-      black_holes->at(i).is_deadly = random_int(0, 1);
+      black_holes->at(i).is_deadly = random_int(0, 2);
    }
 }
 
+void Galaxy::collide_black_holes(std::vector<black_hole_object> holes, size_t amount, Black_hole* bh){
+   for (int i=0; i < amount; i++){
+      bh->set_pos(glm::vec3(holes[i].pos, 0.0f)-global_states.camera->pos);
+      bh->collide(holes[i], global_states.user->size);  
+   }
+}
 void Galaxy::draw_black_holes(int amount, std::vector<black_hole_object> &black_holes, Black_hole* bh){
    for (int i=0; i<amount; i++){
       bh->update();

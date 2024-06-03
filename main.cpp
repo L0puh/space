@@ -84,16 +84,15 @@ int main() {
       galaxy.update(&objs);
       galaxy.generate_black_holes(amount_black_holes, &black_holes);
 
-
       camera.get_movement(deltatime, user.size, objs); 
-      for (int i=0; i < amount_black_holes; i++){
-         hole.collide(&camera, black_holes[i].to, user.size);  
-      }
+      
+      galaxy.collide_black_holes(black_holes, amount_black_holes, &hole);
 
-      hole.update(); 
-      hole.translate_object(glm::vec2(8.0f, 8.0f) - glm::vec2(camera.pos.x, camera.pos.y)); 
-      hole.scale_object({4.0f, 2.0f});
-      hole.collide(&camera, galaxy.center_pos-galaxy.get_planet(0).size, user.size);
+      hole.set_pos(glm::vec3(8.0f, 8.0f, 0.0f) - camera.pos);
+      black_hole_object bh;
+      bh.is_deadly = true;
+      bh.to = galaxy.center_pos-galaxy.get_planet(0).size;
+      hole.collide(bh, user.size);
 
       user.translate_object(camera.inital_pos);
       user.scale_object(user.size);
@@ -111,10 +110,12 @@ int main() {
       galaxy.draw_planets();
       galaxy.draw_black_holes(amount_black_holes, black_holes, &hole);
 
+      // FIXME(teleport to the center to the galaxy) 
       hole.update(); 
       hole.translate_object(glm::vec2(8.0f, 8.0f) - glm::vec2(camera.pos.x, camera.pos.y)); 
       hole.scale_object({4.0f, 2.0f});
       hole.draw(hole.model, camera.view);
+
       user.draw(user.model, camera.view);
 
       utils::debug_console_render();

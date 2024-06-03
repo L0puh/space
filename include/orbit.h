@@ -97,6 +97,7 @@ class Galaxy{
       void draw_stars();
       void draw_planets();
       void draw_black_holes(int amount, std::vector<black_hole_object> &black_holes, Black_hole* bh);
+      void collide_black_holes(std::vector<black_hole_object>, size_t, Black_hole*);
       bool is_out(User*);
       bool is_out(collider);
 };

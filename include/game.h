@@ -14,6 +14,7 @@
 #define LEN(n) sizeof(n)/sizeof(n[0])
 
 struct collider;
+struct black_hole_object;
 class Object;
 class User; 
 class Renderer;
@@ -292,11 +293,12 @@ class User: public Object {
 };
 
 class Black_hole: public Object {
+   float damage = 10.f;
    public:
       Black_hole(std::string src_vertex, std::string src_fragment, Texture* tex_sheet, Texture_sheet coord = {0, 2}): 
          Object(src_vertex, src_fragment, tex_sheet, {0, 2}){}
    public:
-      void collide(Camera *camera, glm::vec2 pos_to, glm::vec2 size);
+      void collide(black_hole_object, glm::vec2 size);
 
 };
 
