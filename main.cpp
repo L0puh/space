@@ -61,9 +61,10 @@ int main() {
    global_states.window = window;
    global_states.w_size = get_window_size(window);
 
-   size_t amount_planets = 10;
+   size_t amount_planets = 10, amount_black_holes=40;
    std::vector<collider> objs(amount_planets); //FIXME
    std::vector<glm::vec2> stars(7000);
+   std::vector<black_hole_object> black_holes(amount_black_holes);
    
    Galaxy galaxy(amount_planets, {300.0f, 4.0f}, 1000, &star, &planet);
    galaxy.init_map(&objs);
@@ -81,12 +82,19 @@ int main() {
       hole.update();
       star.update();
       galaxy.update(&objs);
+      galaxy.generate_black_holes(amount_black_holes, &black_holes);
 
-      hole.translate_object(glm::vec2(8.0f, 8.0f) - glm::vec2(camera.pos.x, camera.pos.y)); 
-      hole.scale_object({4.0f, 2.0f});
 
       camera.get_movement(deltatime, user.size, objs); 
+      for (int i=0; i < amount_black_holes; i++){
+         hole.collide(&camera, black_holes[i].to, user.size);  
+      }
+
+      hole.update(); 
+      hole.translate_object(glm::vec2(8.0f, 8.0f) - glm::vec2(camera.pos.x, camera.pos.y)); 
+      hole.scale_object({4.0f, 2.0f});
       hole.collide(&camera, galaxy.center_pos-galaxy.get_planet(0).size, user.size);
+
       user.translate_object(camera.inital_pos);
       user.scale_object(user.size);
       user.rotate_object(camera.rotation, glm::vec3(0.0f, 0.0f, 1.0f));
@@ -101,7 +109,11 @@ int main() {
       galaxy.generate_galaxy_sphere(stars.size(), &stars);
       galaxy.draw_galaxy_sphere(stars);
       galaxy.draw_planets();
+      galaxy.draw_black_holes(amount_black_holes, black_holes, &hole);
 
+      hole.update(); 
+      hole.translate_object(glm::vec2(8.0f, 8.0f) - glm::vec2(camera.pos.x, camera.pos.y)); 
+      hole.scale_object({4.0f, 2.0f});
       hole.draw(hole.model, camera.view);
       user.draw(user.model, camera.view);
 

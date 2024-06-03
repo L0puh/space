@@ -21,7 +21,7 @@ void Vertex::create_EBO(const void* data, size_t size){
    glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
 }
 
-/* with EBO, size is lenght of indices buffer*/
+/* with EBO, size is length of indices buffer*/
 void Vertex::draw(GLenum mode, size_t size){
    bind();
    glDrawElements(mode, size, GL_UNSIGNED_INT, 0);

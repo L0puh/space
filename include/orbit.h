@@ -15,16 +15,24 @@
 #define MAX_ORBIT 1000
 
 class Planet;
+class Galaxy;
 struct planet_object;
 namespace utils{
    void error(std::string, std::string);
 }
 
+struct black_hole_object {
+   glm::vec2 pos;
+   glm::vec2 to;
+   glm::vec2 size;
+   bool is_deadly;
+};
+
 struct planet_object{
    float radius;
    float speed=1.0f;
    glm::vec2 pos;
-   glm::vec2 velocity = {0.0f, 0.0f};
+   glm::vec2 direction = {0.0f, 0.0f};
    float mass;
    glm::vec2 size;
    float distance_to_center;
@@ -32,9 +40,9 @@ struct planet_object{
 };
 
 namespace orbit {
-   void draw_planets(std::vector<planet_object> planets, size_t amount, Planet *planet, Object *dot);
+   void draw_planets(std::vector<planet_object> planets, size_t amount, Planet *planet, Object *dot, Galaxy*);
    void draw_orbit(std::vector<glm::vec2> orbit, Object *dot);
-   void update_plantes(planet_object *p, std::vector<planet_object> planets, size_t amount, glm::vec2 center);
+   void update_plantes(planet_object *p, std::vector<planet_object> planets, size_t amount, glm::vec2 center, float);
    bool check_collisions(std::vector<planet_object>, collider user, size_t amount);
    void run_orbit_prototype(Planet*, Object*);
 };
@@ -47,7 +55,7 @@ class Planet: public Object{
       uint ID;
       float radius;
       float mass;
-      glm::vec2 velocity;
+      glm::vec2 direction;
       float distance_to_center = 0;
 };
 
@@ -77,6 +85,7 @@ class Galaxy{
       void generate_objs(Object &obj, float amount, object_type type);
       void generate_galaxy_procedural();
       void generate_galaxy_sphere(int amount, std::vector<glm::vec2>*);
+      void generate_black_holes(int amount, std::vector<black_hole_object>*);
    
    public:
       void init_map(std::vector<collider> *objects);
@@ -87,6 +96,7 @@ class Galaxy{
       void update(std::vector<collider>*);
       void draw_stars();
       void draw_planets();
+      void draw_black_holes(int amount, std::vector<black_hole_object> &black_holes, Black_hole* bh);
       bool is_out(User*);
       bool is_out(collider);
 };

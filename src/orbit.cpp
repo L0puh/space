@@ -9,10 +9,13 @@
 
 
 namespace orbit {
-   void update_plantes(planet_object *p, std::vector<planet_object> planets, size_t amount, glm::vec2 center){ 
-      p->pos.x = sin(glfwGetTime()*global_states.timestep*p->speed) / p->mass * p->velocity.y * p->size.x * global_states.gravity;
+   void update_plantes(planet_object *p, std::vector<planet_object> planets, size_t amount, glm::vec2 center, float scale){
+      p->pos.x = sin((glfwGetTime()*global_states.timestep*p->speed)/p->direction.x);
+      p->pos.y = cos((glfwGetTime()*global_states.timestep*p->speed)/p->direction.y);
+      p->pos.x*=(scale*p->mass/global_states.gravity);
+      p->pos.y*=(scale*p->mass/global_states.gravity);
+
       p->pos.x += center.x; 
-      p->pos.y = cos(glfwGetTime()*global_states.timestep*p->speed) / p->mass * p->velocity.x * p->size.y * global_states.gravity;
       p->pos.y += center.y; 
       if (p->orbit.size()*p->speed < MAX_ORBIT*p->radius)
          p->orbit.push_back(p->pos);
@@ -26,8 +29,16 @@ namespace orbit {
       return false;
    }
 
-   void draw_planets(std::vector<planet_object> planets, size_t amount, Planet *planet, Object *dot){
+   void draw_planets(std::vector<planet_object> planets, size_t amount, Planet *planet, Object *dot, Galaxy *galaxy){
+      collider sun = {planets[0].pos, planets[0].size, planets[0].radius};
+      
       for (int i=0; i < amount; i++){
+         if (galaxy != nullptr){
+            if(galaxy->is_out({planets[i].pos, {1.0f, 1.0f}, planets[i].radius})){
+               planets[i].orbit.clear();
+               continue;
+             }
+         }
          draw_orbit(planets[i].orbit, dot);
          planet->update();
          planet->translate_object(planets[i].pos - glm::vec2(global_states.camera->pos));
@@ -49,11 +60,12 @@ namespace orbit {
       Texture tex_sheet("../textures/texture_sheet.png", PNG);
       tex_sheet.load_texture();
       int amount_planets = 4;
+      float scale = 20.0f;
       std::vector<planet_object> planets(amount_planets);
       planets[0] = {50.0f, 0.0f, {0.0f, 0.0f}, {0.2f, 0.2f}, 5.2f, {0.2, 0.2}, 0.0f};
       planets[1] = {10.0f, 0.2f, {0.4f, 0.4f}, {2.0f, 2.0f}, 4.2f, {0.1, 0.1}, 1.0f};
       planets[2] = {30.0f, 0.6f, {0.8f, 0.8f}, {-3.0f, -3.0f}, 4.2f, {0.2, 0.2}, 1.0f};
-      planets[3] = {39.0f, 1.0f, {0.9f, 0.9f}, {4.0f, -5.0f}, 4.2f, {0.2, 0.2}, 1.0f};
+      planets[3] = {39.0f, 1.0f, {random_float(1.0f, scale), random_float(1.0f, scale)}, {4.0f, -5.0f}, 4.2f, {0.2, 0.2}, 1.0f};
       utils::log("DONE PLANET INIT");
       while (!glfwWindowShouldClose(global_states.window)){
          utils::debug_new_frame();
@@ -63,8 +75,8 @@ namespace orbit {
          utils::debug_console(&planets);
      
          for (int i = 1; i < amount_planets; i++)
-            update_plantes(&planets[i], planets, sizeof(planets), {0.0f, 0.0f});
-         draw_planets(planets, amount_planets, planet, dot);
+            update_plantes(&planets[i], planets, sizeof(planets), {0.0f, 0.0f}, 10.f);
+         draw_planets(planets, amount_planets, planet, dot, nullptr);
 
          utils::debug_console_render();
          glfwSwapBuffers(global_states.window);
@@ -104,9 +116,32 @@ bool Galaxy::is_out(collider col){
 }
 void Galaxy::update(std::vector<collider> *objs){
    for (int i = 1; i < amount_planets; i++)
-      orbit::update_plantes(&planets[i], planets, amount_planets, center_pos);
+      orbit::update_plantes(&planets[i], planets, amount_planets, center_pos, scale);
    for (int i = 0; i < amount_planets; i++)
       objs->at(i) = {planets[i].pos, planets[i].size, planets[i].radius};
+}
+void Galaxy::generate_black_holes(int amount, std::vector<black_hole_object> *black_holes){
+   srand(seed);
+   for (int i=0; i < amount; i++){
+      float pos_x = random_float(1.0f, scale);
+      float pos_y = random_float(1.0f, scale);
+      float pos_to_x = random_float(1.0f, scale);
+      float pos_to_y = random_float(1.0f, scale);
+      float size = random_float(4.0f, 10.0f);
+      black_holes->at(i).pos = {pos_x, pos_y};
+      black_holes->at(i).to = {pos_to_x, pos_to_y};
+      black_holes->at(i).size = {size, size/2};
+      black_holes->at(i).is_deadly = random_int(0, 1);
+   }
+}
+
+void Galaxy::draw_black_holes(int amount, std::vector<black_hole_object> &black_holes, Black_hole* bh){
+   for (int i=0; i<amount; i++){
+      bh->update();
+      bh->translate_object(black_holes[i].pos-glm::vec2(global_states.camera->pos));
+      bh->scale_object(black_holes[i].size);
+      bh->draw(bh->model, global_states.camera->view);
+   }
 }
 void Galaxy::generate_galaxy_sphere(int amount, std::vector<glm::vec2> *stars){ // sphere
    srand(seed);
@@ -116,6 +151,7 @@ void Galaxy::generate_galaxy_sphere(int amount, std::vector<glm::vec2> *stars){ 
       float pos_x = cos(angle) * distance;
       float pos_y = sin(angle) * distance; 
       stars->at(i) = {pos_x, pos_y};
+      
    }
 }
 void Galaxy::draw_stars(){
@@ -185,11 +221,11 @@ void Galaxy::init_map(std::vector<collider> *objects){
    planets[0] = {550.f, 2.0f, center_pos, {0.0f, 0.0f}, 15.2f, {20.2, 20.2}, 2.0f}; //SUN
    srand(seed);
    for (int i = 1; i < amount_planets; i++){
-      float vel = random_float(0, 420)-100;
+      float vel = (random_float(0, 420)-100);
       float sz = random_float(1, 10);
       planets[i] = {sz, 1/random_float(1, 100),
-         {random_float(0, 250), random_float(0, 250)},
-         {vel, vel}, random_float(0, 7), 
+         {random_float(1.0f, scale), random_float(1.0f, scale)}, //pos
+         {vel, vel}, random_float(1, 6),
          {sz, sz}, 10.0f};
    }
    for (int i = 0; i < objects->size(); i++){
@@ -197,7 +233,7 @@ void Galaxy::init_map(std::vector<collider> *objects){
    }
 }
 void Galaxy::draw_planets(){
-   orbit::draw_planets(planets, amount_planets, planet, star);
+   orbit::draw_planets(planets, amount_planets, planet, star, this);
 }
 
 
