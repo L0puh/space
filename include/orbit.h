@@ -21,6 +21,18 @@ namespace utils{
    void error(std::string, std::string);
 }
 
+struct galaxy_object {
+   int seed;
+   glm::vec2 center_pos;
+   float scale;
+   int amount_planets;
+   int amount_black_holes;
+   int amount_stars;
+   std::vector<planet_object> planets;
+   std::vector<black_hole_object> black_holes;
+   std::vector<glm::vec2> stars;
+   std::vector<collider> objects;
+};
 struct black_hole_object {
    glm::vec2 pos;
    glm::vec2 to;
@@ -40,6 +52,9 @@ struct planet_object{
 };
 
 namespace orbit {
+   void generate_galaxies(int amount, std::vector<int> *seeds, std::vector<galaxy_object> *galaxies);
+   void draw_galaxies(int amount, std::vector<galaxy_object> *galaxies, Galaxy*, Black_hole*);
+   void update_galaxies(int amount, std::vector<galaxy_object>* galaxies, Galaxy* g);
    void draw_planets(std::vector<planet_object> planets, size_t amount, Planet *planet, Object *dot, Galaxy*);
    void draw_orbit(std::vector<glm::vec2> orbit, Object *dot);
    void update_plantes(planet_object *p, std::vector<planet_object> planets, size_t amount, glm::vec2 center, float);
@@ -62,20 +77,19 @@ class Planet: public Object{
 
 class Galaxy{
    public: 
-      Galaxy(size_t amount_planets, glm::vec2 center_pos, float scale, Object *star, Planet* planet): 
-         star(star), planet(planet),
-         center_pos(center_pos), 
-         scale(scale), planets(amount_planets), 
-         amount_planets(amount_planets) {}
+      Galaxy(Object *star, Planet* planet): star(star), planet(planet) {}
+      void set_data(galaxy_object *x) { 
+         data = x; 
+         data->objects.resize(data->amount_planets);
+         data->planets.resize(data->amount_planets);
+         data->black_holes.resize(data->amount_black_holes);
+         data->stars.resize(data->amount_stars);
+      }
    public:
-      glm::vec2 center_pos;
-      std::vector<planet_object> planets;
-      size_t amount_planets;
       bool is_star=false;
-      float scale = 10.0f;
-      uint32_t prosedural_seed = 0, 
-               seed = random_int(1, 100);
+      uint32_t prosedural_seed = 0;
       Planet *planet;
+      galaxy_object *data;
       Object *star;
    public:
       //GENERATION 

@@ -5,10 +5,46 @@
 #include "utils.h"
 #include <GLFW/glfw3.h>
 #include <cmath>
+#include <map>
 #include <vector>
 
 
 namespace orbit {
+   void generate_galaxies(int amount, std::vector<int> *seeds, std::vector<galaxy_object> *galaxies){
+      srand(1000);
+      if (seeds->size() != amount) seeds->resize(amount);
+      std::map<int, bool> m; 
+      for (int i = 0; i < amount; i++){
+         int r = random_int(10, 10000);
+         while (m[r] == 1) r = random_int(10, 10000);
+         seeds->at(i) = r;
+         m[r] = 1;
+         galaxies->at(i).seed = r;
+         galaxies->at(i).center_pos = {random_float(1, 4000) - 1000, random_float(1, 4000) - 1000};
+         galaxies->at(i).scale = random_float(500, 1000);
+         galaxies->at(i).amount_stars = galaxies->at(i).scale * 2;
+         galaxies->at(i).amount_planets = random_int(1, 20);
+         galaxies->at(i).amount_black_holes = galaxies->at(i).amount_planets * 2;
+      }
+   }
+   void update_galaxies(int amount, std::vector<galaxy_object>* galaxies, Galaxy* g){
+      for (int i = 0; i < amount; i++){
+         g->set_data(&galaxies->at(i));
+         g->generate_galaxy_sphere(galaxies->at(i).amount_stars, &galaxies->at(i).stars);
+         g->init_map(&galaxies->at(i).objects);
+         g->update(&galaxies->at(i).objects);
+      }
+   }
+   void draw_galaxies(int amount, std::vector<galaxy_object> *galaxies, Galaxy* g, Black_hole *h){
+      for (int i = 0; i < amount; i++){
+         g->set_data(&galaxies->at(i));
+         g->collide_black_holes(galaxies->at(i).black_holes, galaxies->at(i).amount_black_holes, h);
+         g->generate_black_holes(galaxies->at(i).amount_black_holes, &galaxies->at(i).black_holes);
+         g->draw_galaxy_sphere(galaxies->at(i).stars);
+         g->draw_black_holes(galaxies->at(i).amount_black_holes, galaxies->at(i).black_holes, h);
+         g->draw_planets();
+      }
+   }
    void update_plantes(planet_object *p, std::vector<planet_object> planets, size_t amount, glm::vec2 center, float scale){
       p->pos.x = sin((glfwGetTime()*global_states.timestep*p->speed)/p->direction.x);
       p->pos.y = cos((glfwGetTime()*global_states.timestep*p->speed)/p->direction.y);
@@ -104,32 +140,33 @@ bool Galaxy::get_star(float x, float y){
    return rnd_int(0, 20) == 1;
 }
 planet_object Galaxy::get_planet(size_t index) {
-   if (index >= amount_planets) 
+   if (index >= data->amount_planets) 
       utils::error("out of range", "Map");
-   return planets.at(index);
+   return data->planets.at(index);
 }
 bool Galaxy::is_out(User *user){
-   return AABB_collision({center_pos, {2*scale, 2*scale}, scale/2}, {user->pos, user->size, 1.0f});
+   return AABB_collision({data->center_pos, {2*data->scale, 2*data->scale}, data->scale/2}, {user->pos, user->size, 1.0f});
 }
 bool Galaxy::is_out(collider col){
-   return AABB_collision({center_pos, {2*scale, 2*scale}, scale/2}, col);;
+   return AABB_collision({data->center_pos, {2*data->scale, 2*data->scale}, data->scale/2}, col);;
 }
 void Galaxy::update(std::vector<collider> *objs){
-   for (int i = 1; i < amount_planets; i++)
-      orbit::update_plantes(&planets[i], planets, amount_planets, center_pos, scale);
-   for (int i = 0; i < amount_planets; i++)
-      objs->at(i) = {planets[i].pos, planets[i].size, planets[i].radius};
+   for (int i = 1; i < data->amount_planets; i++)
+      orbit::update_plantes(&data->planets[i], data->planets, data->amount_planets, data->center_pos, data->scale);
+
+   for (int i = 0; i < data->amount_planets; i++)
+      objs->at(i) = {data->planets[i].pos, data->planets[i].size, data->planets[i].radius};
 }
 void Galaxy::generate_black_holes(int amount, std::vector<black_hole_object> *black_holes){
-   srand(seed);
+   srand(data->seed);
    for (int i=0; i < amount; i++){
-      float pos_x = random_float(1.0f, scale);
-      float pos_y = random_float(1.0f, scale);
-      float pos_to_x = random_float(1.0f, scale);
-      float pos_to_y = random_float(1.0f, scale);
-      float size = random_float(6.0f, 20.0f);
-      black_holes->at(i).pos = {pos_x, pos_y};
-      black_holes->at(i).to = {pos_to_x, pos_to_y};
+      float pos_x = random_float(1.0f, data->scale);
+      float pos_y = random_float(1.0f, data->scale);
+      float pos_to_x = random_float(1.0f, data->scale+100.f)-60.f;
+      float pos_to_y = random_float(1.0f, data->scale+100.f)-60.f;
+      float size = random_float(40.0f, 50.0f);
+      black_holes->at(i).pos = glm::vec2(pos_x, pos_y) + data->center_pos;
+      black_holes->at(i).to = glm::vec2(pos_to_x, pos_to_y) + data->center_pos;
       black_holes->at(i).size = {size, size/2};
       black_holes->at(i).is_deadly = random_int(0, 2);
    }
@@ -150,10 +187,11 @@ void Galaxy::draw_black_holes(int amount, std::vector<black_hole_object> &black_
    }
 }
 void Galaxy::generate_galaxy_sphere(int amount, std::vector<glm::vec2> *stars){ // sphere
-   srand(seed);
+                                                                                
+   srand(data->seed);
    for (int i=0; i < amount; i++){
-      float distance = random_float(1.0f, scale);
-      float angle = random_float(1.0f, scale) * 2.f * glm::pi<float>();
+      float distance = random_float(1.0f, data->scale);
+      float angle = random_float(1.0f, data->scale) * 2.f * glm::pi<float>();
       float pos_x = cos(angle) * distance;
       float pos_y = sin(angle) * distance; 
       stars->at(i) = {pos_x, pos_y};
@@ -166,7 +204,7 @@ void Galaxy::draw_stars(){
 void Galaxy::draw_galaxy_sphere(std::vector<glm::vec2> stars){
    for (int i=0; i<stars.size();i++) {
       star->update();
-      star->translate_object((stars[i]+center_pos) - glm::vec2(global_states.camera->pos.x, global_states.camera->pos.y));
+      star->translate_object((stars[i]+data->center_pos) - glm::vec2(global_states.camera->pos));
       star->draw(star->model, global_states.camera->view, white);
    }
 }
@@ -183,7 +221,7 @@ void Galaxy::generate_objs(Object &obj, float amount, object_type type){
    boarder cur_boarder;
    cur_boarder = set_boarders(global_states.camera->pos);
    global_states.cur_boarder = cur_boarder;
-   srand(seed);
+   srand(data->seed);
    for ( float i=cur_boarder.min_x; i <= cur_boarder.max_x; i+=amount){
       for (float j=cur_boarder.min_y; j <= cur_boarder.max_y; j+=amount){
          bool is_star;
@@ -222,24 +260,24 @@ boarder Galaxy::set_boarders(glm::vec2 pos){
 
 
 void Galaxy::init_map(std::vector<collider> *objects){
-   if (amount_planets != objects->size() || amount_planets == 0 || objects->size() == 0) 
+   if (data->amount_planets != objects->size() || data->amount_planets == 0 || objects->size() == 0) 
       utils::error("size of planets != size of objects", "map init");
-   planets[0] = {550.f, 2.0f, center_pos, {0.0f, 0.0f}, 15.2f, {20.2, 20.2}, 2.0f}; //SUN
-   srand(seed);
-   for (int i = 1; i < amount_planets; i++){
+   data->planets[0] = {550.f, 2.0f, data->center_pos, {0.0f, 0.0f}, 15.2f, {20.2, 20.2}, 2.0f}; //SUN
+   srand(data->seed);
+   for (int i = 1; i < data->amount_planets; i++){
       float vel = (random_float(0, 420)-100);
       float sz = random_float(1, 10);
-      planets[i] = {sz, 1/random_float(1, 100),
-         {random_float(1.0f, scale), random_float(1.0f, scale)}, //pos
+      data->planets[i] = {sz, 1/random_float(1, 100),
+         {random_float(1.0f, data->scale), random_float(1.0f, data->scale)}, //pos
          {vel, vel}, random_float(1, 6),
          {sz, sz}, 10.0f};
    }
    for (int i = 0; i < objects->size(); i++){
-      objects->at(i) = {planets[i].pos, planets[i].size, planets[i].radius};
+      objects->at(i) = {data->planets[i].pos, data->planets[i].size, data->planets[i].radius};
    }
 }
 void Galaxy::draw_planets(){
-   orbit::draw_planets(planets, amount_planets, planet, star, this);
+   orbit::draw_planets(data->planets, data->amount_planets, planet, star, this);
 }
 
 
