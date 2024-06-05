@@ -225,9 +225,13 @@ class Camera {
       void update();
       void set_position(glm::vec3 camera_pos) { pos = camera_pos; }
       void set_init_position() {
+         view = glm::translate(glm::mat4(1.0f), this->inital_pos);
+      }
+      void set_init_position(glm::vec2 inital_pos) {
          //FIXME for procedural generation: 
          /* inital_pos = {map_offset/2.0f, map_offset/2.0f, 0.0f}; */
-         view = glm::translate(glm::mat4(1.0f), inital_pos);
+         this->inital_pos = glm::vec3(inital_pos, 0.0f);
+         view = glm::translate(glm::mat4(1.0f), this->inital_pos);
       }
       void get_movement(float deltatime, glm::vec2 user_sz, std::vector<collider>);
       bool check_collisions(std::vector<collider> objs, glm::vec2 user_size, glm::vec2 pos);

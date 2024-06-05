@@ -114,11 +114,8 @@ void Object::draw(glm::mat4 &model, glm::mat4 view){
    shader.set_matrix4fv("model", model);
    if (tex_type == NONE)
       vertex.draw_buffer(GL_POINTS, 1);
-   else if (tex_type == LINES)
+   else 
       vertex.draw(GL_TRIANGLES, LEN(indices_square));
-   else
-      vertex.draw(GL_TRIANGLES, LEN(indices_square));
-   tex_sheet->unuse();
 }
 
 void Object::draw(glm::mat4 &model, glm::mat4 view, glm::vec3 color){
@@ -132,11 +129,8 @@ void Object::draw(glm::mat4 &model, glm::mat4 view, glm::vec3 color){
    shader.set_vec3("color", color);
    if (tex_type == NONE)
       vertex.draw_buffer(GL_POINTS, 1);
-   else if (tex_type == LINES)
+   else 
       vertex.draw(GL_TRIANGLES, LEN(indices_square));
-   else
-      vertex.draw(GL_TRIANGLES, LEN(indices_square));
-   tex_sheet->unuse();
 }
 
 glm::mat4 Object::get_projection(float zoom){

@@ -53,11 +53,12 @@ struct planet_object{
 
 namespace orbit {
    void generate_galaxies(int amount, std::vector<int> *seeds, std::vector<galaxy_object> *galaxies);
-   void draw_galaxies(int amount, std::vector<galaxy_object> *galaxies, Galaxy*, Black_hole*);
-   void update_galaxies(int amount, std::vector<galaxy_object>* galaxies, Galaxy* g);
-   void draw_planets(std::vector<planet_object> planets, size_t amount, Planet *planet, Object *dot, Galaxy*);
+   void draw_galaxies(int amount, std::vector<galaxy_object> *galaxies, Galaxy*, Black_hole*, std::vector<glm::vec2>*);
+   void update_galaxies(int amount, std::vector<galaxy_object>* galaxies, Galaxy* g, std::vector<glm::vec2>*);
+   void draw_planets(std::vector<planet_object> *planets, size_t amount, std::vector<glm::vec2>*, Planet *planet, Object *dot, Galaxy*);
+   void draw_planets(std::vector<planet_object> *planets, size_t amount, Planet *planet, Object *dot, Galaxy*);
    void draw_orbit(std::vector<glm::vec2> orbit, Object *dot);
-   void update_plantes(planet_object *p, std::vector<planet_object> planets, size_t amount, glm::vec2 center, float);
+   void update_planets(planet_object *p, std::vector<planet_object> planets, size_t amount, glm::vec2 center, float, std::vector<glm::vec2>*);
    bool check_collisions(std::vector<planet_object>, collider user, size_t amount);
    void run_orbit_prototype(Planet*, Object*);
 };
@@ -88,8 +89,8 @@ class Galaxy{
    public:
       bool is_star=false;
       uint32_t prosedural_seed = 0;
-      Planet *planet;
       galaxy_object *data;
+      Planet *planet;
       Object *star;
    public:
       //GENERATION 
@@ -107,8 +108,9 @@ class Galaxy{
       planet_object get_planet(size_t index);
       void draw_galaxy_sphere(std::vector<glm::vec2>);
       static boarder set_boarders(glm::vec2);
-      void update(std::vector<collider>*);
+      void update(std::vector<collider>*, std::vector<glm::vec2>* );
       void draw_stars();
+      void draw_planets(std::vector<glm::vec2>* orbits);
       void draw_planets();
       void draw_black_holes(int amount, std::vector<black_hole_object> &black_holes, Black_hole* bh);
       void collide_black_holes(std::vector<black_hole_object>, size_t, Black_hole*);
