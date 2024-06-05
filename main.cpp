@@ -1,4 +1,5 @@
 #include "game.h" 
+#include "imgui/imgui.h"
 #include "state.h"
 #include "orbit.h"
 #include "utils.h"
@@ -57,7 +58,7 @@ int main() {
    std::vector<glm::vec2> orbits;
 
    camera.set_init_position(galaxies.at(0).center_pos - galaxies.at(0).scale);
-   user.pos = camera.pos;
+   user.set_pos(camera.initial_pos);
 
    float last_frame = 0.0f, deltatime;
 
@@ -79,7 +80,7 @@ int main() {
       camera.get_movement(deltatime, user.size, galaxies[0].objects);
       orbit::update_galaxies(galaxies.size(), &galaxies, &galaxy, &orbits);
       
-      user.translate_object(camera.inital_pos);
+      user.translate_object(camera.initial_pos);
       user.scale_object(user.size);
       user.rotate_object(camera.rotation, glm::vec3(0.0f, 0.0f, 1.0f));
       user.set_pos(camera.pos);

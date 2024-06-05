@@ -16,7 +16,7 @@ void Camera::update(){
 
 bool Camera::check_collisions(std::vector<collider> objs, glm::vec2 user_size, glm::vec2 pos){
    for (const auto& obj: objs){
-      if (!AABB_collision({obj.pos, obj.size, obj.radius}, {pos, user_size, 2.0f})) 
+      if (!AABB_collision({obj.pos, obj.size, obj.radius}, {pos+glm::vec2(initial_pos), user_size, 2.0f})) 
          return true;
    }
    return false;

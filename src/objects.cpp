@@ -141,7 +141,7 @@ glm::mat4 Object::get_projection(float zoom){
 
 
 void Black_hole::collide(black_hole_object bl,glm::vec2 size){
-   if (!AABB_collision({pos+global_states.camera->pos, size, size.x/sqr_2}, {global_states.camera->pos, {2.0f, 2.0f}, 1.0f})){
+   if (!AABB_collision({bl.pos, bl.size, bl.size.x/sqr_2}, {global_states.camera->pos+global_states.camera->initial_pos, {2.0f, 2.0f}, 1.0f})){
       global_states.camera->pos = {bl.to, 0.0f};
       if (bl.is_deadly) {
          global_states.user->HP-=damage;

@@ -23,7 +23,7 @@ namespace orbit {
          galaxies->at(i).center_pos = {random_float(1, 4000) - 1000, random_float(1, 4000) - 1000};
          galaxies->at(i).scale = random_float(500, 1000);
          galaxies->at(i).amount_stars = galaxies->at(i).scale * 2;
-         galaxies->at(i).amount_planets = random_int(1, 10);
+         galaxies->at(i).amount_planets = random_int(4, 10);
          galaxies->at(i).amount_black_holes = galaxies->at(i).amount_planets * 2;
       }
    }
@@ -33,15 +33,15 @@ namespace orbit {
          g->generate_galaxy_sphere(galaxies->at(i).amount_stars, &galaxies->at(i).stars);
          g->init_map(&galaxies->at(i).objects);
          g->update(&galaxies->at(i).objects, orb);
+         g->generate_black_holes(galaxies->at(i).amount_black_holes, &galaxies->at(i).black_holes);
       }
    }
    void draw_galaxies(int amount, std::vector<galaxy_object> *galaxies, Galaxy* g, Black_hole *h, std::vector<glm::vec2>* orb){
       for (int i = 0; i < amount; i++){
          g->set_data(&galaxies->at(i));
-         g->generate_black_holes(galaxies->at(i).amount_black_holes, &galaxies->at(i).black_holes);
          g->draw_galaxy_sphere(galaxies->at(i).stars);
-         g->collide_black_holes(galaxies->at(i).black_holes, galaxies->at(i).amount_black_holes, h);
          g->draw_black_holes(galaxies->at(i).amount_black_holes, galaxies->at(i).black_holes, h);
+         g->collide_black_holes(galaxies->at(i).black_holes, galaxies->at(i).amount_black_holes, h);
          g->draw_planets(orb);
       }
    }
@@ -178,21 +178,20 @@ void Galaxy::update(std::vector<collider> *objs, std::vector<glm::vec2>* orbs){
 void Galaxy::generate_black_holes(int amount, std::vector<black_hole_object> *black_holes){
    srand(data->seed);
    for (int i=0; i < amount; i++){
-      float pos_x = random_float(1.0f, data->scale);
-      float pos_y = random_float(1.0f, data->scale);
-      float pos_to_x = random_float(1.0f, data->scale)-60.f;
-      float pos_to_y = random_float(1.0f, data->scale)-60.f;
-      float size = random_float(40.0f, 50.0f);
+      float pos_x = cos(random_float(1.0f, 100.0f))* data->scale/random_float(1.0, 3.0f);
+      float pos_y = sin(random_float(1.0f, 100.0f))* data->scale/random_float(1.0, 3.0f);
+      float pos_to_x = cos(random_float(1.0f, 100.0f))* data->scale/random_float(1.0, 3.0f);
+      float pos_to_y = sin(random_float(1.0f, 100.0f))* data->scale/random_float(1.0, 3.0f);
+      float size = random_float(3.0f, 10.0f);
       black_holes->at(i).pos = glm::vec2(pos_x, pos_y) + data->center_pos;
       black_holes->at(i).to = glm::vec2(pos_to_x, pos_to_y) + data->center_pos;
-      black_holes->at(i).size = {size, size/2};
+      black_holes->at(i).size = {size, size};
       black_holes->at(i).is_deadly = random_int(0, 2);
    }
 }
 
 void Galaxy::collide_black_holes(std::vector<black_hole_object> holes, size_t amount, Black_hole* bh){
    for (int i=0; i < amount; i++){
-      bh->set_pos(glm::vec3(holes[i].pos, 0.0f)-global_states.camera->pos);
       bh->collide(holes[i], global_states.user->size);  
    }
 }

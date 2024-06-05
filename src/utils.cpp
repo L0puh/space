@@ -1,5 +1,6 @@
 #include "collision.h"
 #include "utils.h"
+#include "game.h"
 #include "imgui/imgui.h"
 #include "state.h"
 #include <string>
@@ -28,8 +29,8 @@ namespace utils {
       {
          ImGui::Text("USER:");
          ImGui::Text("x: %.4f, y: %.4f\nrotation: %.4f", 
-                                       camera->pos.y,
                                        camera->pos.x,
+                                       camera->pos.y,
                                        camera->rotation);
          ImGui::Text("sin: %.4f, cos: %.4f", 
                                        sin(camera->rotation), 
@@ -44,6 +45,11 @@ namespace utils {
          ImGui::SliderFloat("TIMESTAMP", &global_states.timestep, 0.00001f, 100.0f, "%.9f", 0);
          ImGui::SliderInt("HP", &user->HP, 0, 100, "%d", 0);
          ImGui::SliderInt("EXP", &user->EXP, 0, 100, "%d", 0);
+         ImGui::InputFloat("POS_x", &camera->pos.x, 0.01f, 0.02f, "%.4");
+         ImGui::InputFloat("POS_y", &camera->pos.y, 0.01f, 0.02f, "%.4");
+
+         glm::vec2 p = Input::get_mouse_pos();
+         if (Input::is_pressed(GLFW_KEY_T)) camera->pos = glm::vec3(p*global_states.zoom, 0.0f);
       }
       global_states.camera = camera;
       global_states.user   = user;
