@@ -19,6 +19,7 @@ struct global {
    float gravity = 7.f;
    float stars_amount = 1.0f;
    float deltatime = 0.0f;
+   int last_galaxy = 0;
 };
 
 extern global global_states;

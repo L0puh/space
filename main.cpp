@@ -1,5 +1,4 @@
 #include "game.h" 
-#include "imgui/imgui.h"
 #include "state.h"
 #include "orbit.h"
 #include "utils.h"
@@ -50,14 +49,14 @@ int main() {
    global_states.camera = &camera;
    orbit::run_orbit_prototype(&planet, &star);
 #endif
-   float GALAXIES_AMOUNT = 3;
+   float GALAXIES_AMOUNT = 2;
    std::vector<int> seeds(GALAXIES_AMOUNT);
    std::vector<galaxy_object> galaxies(GALAXIES_AMOUNT);
    orbit::generate_galaxies(galaxies.size(), &seeds, &galaxies);
    Galaxy galaxy(&star, &planet);
    std::vector<glm::vec2> orbits;
 
-   camera.set_init_position(galaxies.at(0).center_pos - galaxies.at(0).scale);
+   camera.set_init_position(galaxies.at(0).center_pos - galaxies.at(0).scale/10);
    user.set_pos(camera.initial_pos);
 
    float last_frame = 0.0f, deltatime;

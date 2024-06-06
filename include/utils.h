@@ -22,6 +22,9 @@ namespace utils{
    inline void log(std::string a){
       printf("[+]: %s\n",a.c_str());
    }
+   inline void log(std::string a, int b){
+      printf("[+]: %s %d\n",a.c_str(), b);
+   }
    inline void log(std::string a, std::string b){
       printf("[+]: %s: %s\n",a.c_str(), b.c_str());
    }

@@ -22,7 +22,7 @@ namespace orbit {
          galaxies->at(i).seed = r;
          galaxies->at(i).center_pos = {random_float(1, 4000) - 1000, random_float(1, 4000) - 1000};
          galaxies->at(i).scale = random_float(500, 1000);
-         galaxies->at(i).amount_stars = galaxies->at(i).scale * 2;
+         galaxies->at(i).amount_stars = galaxies->at(i).scale * 10;
          galaxies->at(i).amount_planets = random_int(4, 10);
          galaxies->at(i).amount_black_holes = galaxies->at(i).amount_planets * 2;
       }
@@ -30,19 +30,51 @@ namespace orbit {
    void update_galaxies(int amount, std::vector<galaxy_object>* galaxies, Galaxy* g, std::vector<glm::vec2>* orb){
       for (int i = 0; i < amount; i++){
          g->set_data(&galaxies->at(i));
+         if (g->is_out(global_states.user)) continue;
          g->generate_galaxy_sphere(galaxies->at(i).amount_stars, &galaxies->at(i).stars);
          g->init_map(&galaxies->at(i).objects);
          g->update(&galaxies->at(i).objects, orb);
          g->generate_black_holes(galaxies->at(i).amount_black_holes, &galaxies->at(i).black_holes);
       }
    }
+   float get_distance_to(glm::vec2 pos, glm::vec2 pos2){
+      float distance = 0;
+      float x = pos.x - pos2.x;
+      float y = pos.y - pos2.y;
+      distance = sqrt(x*x + y*y);
+      return distance;
+   }
+   galaxy_object get_closest_galaxy(std::vector<galaxy_object>* galaxies){
+      int index = 0;
+      float min = MAXFLOAT;
+      glm::vec2 pos = global_states.camera->pos;
+      for (int i = 0; i < galaxies->size(); i++){
+         if (i == global_states.last_galaxy) continue;
+         float d = get_distance_to(galaxies->at(i).center_pos, pos);
+         if (min > d){ 
+            min = d;
+            index = i;
+         }
+      }
+      utils::log("CLOSEST GALAXY FOUND:", index);
+      global_states.last_galaxy = index;
+      return galaxies->at(index);
+   }
    void draw_galaxies(int amount, std::vector<galaxy_object> *galaxies, Galaxy* g, Black_hole *h, std::vector<glm::vec2>* orb){
+      bool no_galaxy = true;
       for (int i = 0; i < amount; i++){
          g->set_data(&galaxies->at(i));
+         if (g->is_out(global_states.user)) continue;
          g->draw_galaxy_sphere(galaxies->at(i).stars);
          g->draw_black_holes(galaxies->at(i).amount_black_holes, galaxies->at(i).black_holes, h);
          g->collide_black_holes(galaxies->at(i).black_holes, galaxies->at(i).amount_black_holes, h);
          g->draw_planets(orb);
+         no_galaxy = false;
+      }
+      if (no_galaxy) {
+
+         galaxy_object closest = get_closest_galaxy(galaxies);
+         global_states.camera->set_position(glm::vec3(closest.center_pos, 0.0f) - global_states.camera->initial_pos);
       }
    }
    void update_planets(planet_object *p, std::vector<planet_object> planets, size_t amount, glm::vec2 center, float scale, std::vector<glm::vec2> *orb){
@@ -74,11 +106,14 @@ namespace orbit {
                continue;
              }
          }
-         draw_orbit(planets->at(i).orbit, dot);
+         draw_orbit(planets->at(i).orbit, dot, galaxy);
          planet->update();
          planet->translate_object(planets->at(i).pos - glm::vec2(global_states.camera->pos));
          planet->scale_object(planets->at(i).size);
-         planet->draw(planet->model, global_states.camera->view);
+         if (i == 0)
+            planet->draw(planet->model, global_states.camera->view, red);
+         else 
+            planet->draw(planet->model, global_states.camera->view);
       }
    }
    void draw_planets(std::vector<planet_object> *planets, size_t amount, std::vector<glm::vec2> *orbits, Planet *planet, Object *dot, Galaxy *galaxy){
@@ -94,13 +129,17 @@ namespace orbit {
          planet->update();
          planet->translate_object(planets->at(i).pos - glm::vec2(global_states.camera->pos));
          planet->scale_object(planets->at(i).size);
-         planet->draw(planet->model, global_states.camera->view);
+         if (i == 0)
+            planet->draw(planet->model, global_states.camera->view, yellow);
+         else 
+            planet->draw(planet->model, global_states.camera->view);
       }
-      draw_orbit(*orbits, dot);
+      draw_orbit(*orbits, dot, galaxy);
    }
 
-   void draw_orbit(std::vector<glm::vec2> orbit, Object *dot){
+   void draw_orbit(std::vector<glm::vec2> orbit, Object *dot, Galaxy *galaxy){
       for (int i = 0; i < orbit.size(); i++){
+         if (galaxy->is_out({orbit[i], {0.01f, 0.01f}, 0.001f})) continue;
          dot->update();
          dot->translate_object(orbit[i] - glm::vec2(global_states.camera->pos));
          dot->draw(dot->model, global_states.camera->view, red);
@@ -161,7 +200,9 @@ planet_object Galaxy::get_planet(size_t index) {
    return data->planets.at(index);
 }
 bool Galaxy::is_out(User *user){
-   return AABB_collision({data->center_pos, {2*data->scale, 2*data->scale}, data->scale/2}, {user->pos, user->size, 1.0f});
+   return AABB_collision({data->center_pos, {2*data->scale, 2*data->scale}, data->scale/2}, 
+                                            {user->pos+glm::vec2(global_states.camera->initial_pos),
+                                             user->size, 1.0f});
 }
 bool Galaxy::is_out(collider col){
    return AABB_collision({data->center_pos, {2*data->scale, 2*data->scale}, data->scale/2}, col);;

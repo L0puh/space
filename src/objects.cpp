@@ -94,13 +94,12 @@ void Object::draw(glm::mat4 &model, glm::mat4 view, Texture texture){
    if (tex_type != NONE && tex_type != LINES)
       texture.use();
    shader.use();
-   shader.set_matrix4fv("proj", proj);
-   shader.set_matrix4fv("view", view);
-   shader.set_matrix4fv("model", model);
+   shader.set_matrix4fv("proj_un", proj);
+   shader.set_matrix4fv("view_un", view);
+   shader.set_matrix4fv("model_un", model);
+   shader.set_vec3("color_un", glm::vec3(1.0f));
    if (tex_type == NONE)
       vertex.draw_buffer(GL_POINTS, 1);
-   else if (tex_type == LINES)
-      vertex.draw(GL_TRIANGLES, LEN(indices_square));
    else
       vertex.draw(GL_TRIANGLES, LEN(indices_square));
 }
@@ -109,9 +108,10 @@ void Object::draw(glm::mat4 &model, glm::mat4 view){
    if (tex_type != NONE && tex_type != LINES)
       tex_sheet->use();
    shader.use();
-   shader.set_matrix4fv("proj", proj);
-   shader.set_matrix4fv("view", view);
-   shader.set_matrix4fv("model", model);
+   shader.set_matrix4fv("proj_un", proj);
+   shader.set_matrix4fv("view_un", view);
+   shader.set_matrix4fv("model_un", model);
+   shader.set_vec3("color_un", glm::vec3(1.0f));
    if (tex_type == NONE)
       vertex.draw_buffer(GL_POINTS, 1);
    else 
@@ -123,10 +123,10 @@ void Object::draw(glm::mat4 &model, glm::mat4 view, glm::vec3 color){
    if (tex_type != NONE && tex_type != LINES)
       tex_sheet->use();
    shader.use();
-   shader.set_matrix4fv("proj", proj);
-   shader.set_matrix4fv("view", view);
-   shader.set_matrix4fv("model", model);
-   shader.set_vec3("color", color);
+   shader.set_matrix4fv("proj_un", proj);
+   shader.set_matrix4fv("view_un", view);
+   shader.set_matrix4fv("model_un", model);
+   shader.set_vec3("color_un", color);
    if (tex_type == NONE)
       vertex.draw_buffer(GL_POINTS, 1);
    else 

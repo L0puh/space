@@ -56,8 +56,10 @@ namespace orbit {
    void draw_galaxies(int amount, std::vector<galaxy_object> *galaxies, Galaxy*, Black_hole*, std::vector<glm::vec2>*);
    void update_galaxies(int amount, std::vector<galaxy_object>* galaxies, Galaxy* g, std::vector<glm::vec2>*);
    void draw_planets(std::vector<planet_object> *planets, size_t amount, std::vector<glm::vec2>*, Planet *planet, Object *dot, Galaxy*);
+   galaxy_object get_closest_galaxy(std::vector<galaxy_object>* galaxies);
+   float get_distance_to(glm::vec2 pos, glm::vec2 pos2);
    void draw_planets(std::vector<planet_object> *planets, size_t amount, Planet *planet, Object *dot, Galaxy*);
-   void draw_orbit(std::vector<glm::vec2> orbit, Object *dot);
+   void draw_orbit(std::vector<glm::vec2> orbit, Object *dot, Galaxy *galaxy);
    void update_planets(planet_object *p, std::vector<planet_object> planets, size_t amount, glm::vec2 center, float, std::vector<glm::vec2>*);
    bool check_collisions(std::vector<planet_object>, collider user, size_t amount);
    void run_orbit_prototype(Planet*, Object*);

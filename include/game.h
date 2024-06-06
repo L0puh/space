@@ -100,6 +100,7 @@ const uint indices_square[] = {
 /*                      COLORS                           */
 
 const glm::vec3 red = {1.0f, 0.0f, 0.0f};
+const glm::vec3 yellow = {1.0f, 1.0f, 0.0f};
 const glm::vec3 white = {1.0f, 1.0f, 1.0f};
 const glm::vec3 blue = {0.0f, 0.0f, 1.0f};
 const glm::vec3 black = {0.0f, 0.0f, 0.0f};
@@ -288,7 +289,7 @@ class Object {
 class User: public Object {
    public: 
       int HP = 100, EXP = 0;
-      glm::vec2 size = {0.2, 0.2};
+      glm::vec2 size = {0.5, 0.5};
       glm::vec2 pos = {1.0, 1.0};
    public:
       User(std::string src_vertex, std::string src_fragment, Texture *tex_sheet, Texture_sheet coord = {0, 1}):

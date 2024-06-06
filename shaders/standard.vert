@@ -1,16 +1,16 @@
 #version 330 core
 layout (location = 0) in vec3 pos;
 
-uniform mat4 model;
-uniform mat4 view;
-uniform mat4 proj;
-uniform vec3 color;
+out vec4 in_color;
 
-out vec3 color_in;
+uniform mat4 model_un;
+uniform mat4 view_un;
+uniform mat4 proj_un;
+uniform vec3 color_un;
 
 void main()
 {
-   gl_Position = proj * view * model * vec4(pos.x, pos.y, pos.z, 1.0f);
-   color_in = color;
+   gl_Position = proj_un * view_un * model_un * vec4(pos.x, pos.y, pos.z, 1.0f);
+   in_color = vec4(color_un, 1.0f);
 }
 

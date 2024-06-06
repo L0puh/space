@@ -28,6 +28,7 @@ namespace utils {
       ImGui::Begin("console", 0, ImGuiWindowFlags_AlwaysAutoResize);
       {
          ImGui::Text("USER:");
+         ImGui::Text("LAST GALAXY: %d", global_states.last_galaxy);
          ImGui::Text("x: %.4f, y: %.4f\nrotation: %.4f", 
                                        camera->pos.x,
                                        camera->pos.y,
