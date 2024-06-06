@@ -1,4 +1,5 @@
 #include "game.h"
+#include "3D.h"
 #include "state.h"
 #include <GLFW/glfw3.h>
 #include <fstream>
@@ -102,10 +103,9 @@ namespace Input {
    }
    void scroll_callback(GLFWwindow* window, double xoffset, double yoffset){
       global_states.zoom -= (float)yoffset;
-       /* if (global_states.zoom < 1.0f) */
-           /* global_states.zoom = 1.0f; */
-       /* if (global_states.zoom > global_states.camera->map_offset-20.0f) */
-           /* global_states.zoom = global_states.camera->map_offset-20.0f; */
+   }
+   void mouse_callback(GLFWwindow* window, double xpos, double ypos){
+      global_states.camera_3d->get_rotation(xpos, ypos);
    }
 };
 

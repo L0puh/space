@@ -3,10 +3,13 @@
 
 #include "game.h"
 
+class Camera_3D;
+
 struct global {
    GLFWwindow* window;
    window_size w_size;
    Camera* camera;
+   Camera_3D* camera_3d;
    User* user;
    struct collision {
       bool AABB_AABB;

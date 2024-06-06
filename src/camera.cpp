@@ -1,8 +1,11 @@
 #include "game.h"
 #include "collision.h"
-#include "glm/ext/matrix_transform.hpp"
-#include <vector>
+#include "state.h"
+#include "3D.h"
 
+#include <glm/ext/matrix_transform.hpp>
+#include <glm/ext/matrix_clip_space.hpp>
+#include <vector>
 
 void Camera::update(){
    set_init_position();
@@ -47,5 +50,53 @@ void Camera::get_movement( float deltatime, glm::vec2 user_size, std::vector<col
       else
          pos.x = x; pos.y = y;
    }
+}
+
+Camera_3D::Camera_3D(){
+   double x, y;
+   glfwGetCursorPos(global_states.window, &x, &y);
+   last_mouse_pos = {x, y};
+}
+Camera_3D::~Camera_3D(){
+}
+glm::mat4 Camera_3D::get_projection(){
+   float aspect = (float)global_states.w_size.width/global_states.w_size.height;
+   return glm::perspective(glm::radians(fov), aspect, 0.1f, 100.0f);
+}
+
+void Camera_3D::get_movement(float deltatime){
+   if (Input::is_pressed(GLFW_KEY_W)){
+      pos += speed * front * deltatime;
+   } 
+   if (Input::is_pressed(GLFW_KEY_S)){
+      pos -= speed * front * deltatime;
+   }
+   if (Input::is_pressed(GLFW_KEY_A)){
+      glm::vec3 d = glm::cross(front, up);
+      pos -= glm::normalize(d) * speed * deltatime;
+   }
+   if (Input::is_pressed(GLFW_KEY_D)){
+      glm::vec3 d = glm::cross(front, up);
+      pos += glm::normalize(d) * speed * deltatime;
+   }
+}
+void Camera_3D::get_rotation(double xpos, double ypos){
+   float xoffset = (xpos-last_mouse_pos.x) * sensitivity;
+   float yoffset = (last_mouse_pos.y - ypos) * sensitivity;
+   last_mouse_pos = {xpos, ypos};
+   
+   yaw   += xoffset; 
+   pitch += yoffset;
+   
+   glm::vec3 dir;
+   dir.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+   dir.y = sin(glm::radians(pitch));
+   dir.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+   front = glm::normalize(dir);
+}
+glm::mat4 Camera_3D::get_view(){
+   glm::mat4 view;
+   view = glm::lookAt(pos, pos+front, up);
+   return view;
 }
 

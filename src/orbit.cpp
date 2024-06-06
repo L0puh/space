@@ -75,6 +75,7 @@ namespace orbit {
 
          galaxy_object closest = get_closest_galaxy(galaxies);
          global_states.camera->set_position(glm::vec3(closest.center_pos, 0.0f) - global_states.camera->initial_pos);
+         global_states.camera->set_position(global_states.camera->pos - closest.scale/2);
       }
    }
    void update_planets(planet_object *p, std::vector<planet_object> planets, size_t amount, glm::vec2 center, float scale, std::vector<glm::vec2> *orb){

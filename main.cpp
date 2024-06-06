@@ -1,3 +1,4 @@
+#include "3D.h"
 #include "game.h" 
 #include "state.h"
 #include "orbit.h"
@@ -9,6 +10,7 @@
 #define DEBUG_MODE
 /* #define COLLISION_PROTOTYPE */
 /* #define ORBIT_PROTOTYPE */
+#define PROTOTYPE_3D
 
 global global_states;
 
@@ -17,7 +19,6 @@ int main() {
    GLFWwindow *window = init_window(width, height);
    global_states.window = window;
    global_states.w_size = {(int)width, (int)height};
-
    glEnable(GL_BLEND); // transparent bg for textures (RBGA)
    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -37,7 +38,10 @@ int main() {
    Object star("../shaders/standard.vert", "../shaders/standard.frag", Image::NONE);
    Black_hole hole("../shaders/user.vert", "../shaders/user.frag", &tex_sheet);
    Camera camera;
-
+   global_states.user = &user;
+#ifdef PROTOTYPE_3D 
+   run_3d_prototype();
+#endif 
 #ifdef COLLISION_PROTOTYPE
    global_states.zoom=1.0f;
    Collision_prototype coll_p(Collision_prototype::AABB_AABB, square, square);
@@ -69,6 +73,7 @@ int main() {
     
 #ifndef COLLISION_PROTOTYPE 
 #ifndef ORBIT_PROTOTYPE
+#ifndef PROTOTYPE_3D 
    while (!glfwWindowShouldClose(window)){
       deltatime = get_deltatime(&last_frame); 
       glfwSetKeyCallback(window, Input::key_callback);
@@ -101,6 +106,7 @@ int main() {
       global_states.w_size = get_window_size(window);
       global_states.deltatime = deltatime;
    }
+#endif 
 #endif 
 #endif 
    shut_down();

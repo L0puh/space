@@ -184,6 +184,7 @@ class Vertex{
 namespace Input {
    void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
    void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+   void mouse_callback(GLFWwindow* window, double xoffset, double yoffset);
    bool is_pressed(int key);
    bool is_relesed(int key);
    glm::vec2 get_mouse_pos();
@@ -194,6 +195,7 @@ enum Image {
    NONE,
    PNG,
    JPG,
+   CUBE,
 };
 
 class Texture {
@@ -246,6 +248,7 @@ class Object {
    public:
       Object(object_type);
       Object(std::string src_vertex, std::string src_fragment, Texture *texture_sheet, Texture_sheet coord);
+      Object(std::string src_vertex, std::string src_fragment, Texture *texture_sheet, Texture_sheet coord, Image);
       Object(std::string src_vertex, std::string src_fragment, Image img_type);
       ~Object();
    public:
@@ -269,6 +272,10 @@ class Object {
       static void rotate_object(glm::mat4 *model, float angle, glm::vec3 pos);
       void set_pos(glm::vec3 pos) { this->pos = pos; }
 
+      void scale_object(glm::vec3 scaler){
+         model = glm::scale(model, scaler);
+         this->size = scaler;
+      }
       void scale_object(glm::vec2 scaler){
          model = glm::scale(model, glm::vec3(scaler.x, scaler.y, 0.2f));
          this->size = scaler;
@@ -277,12 +284,15 @@ class Object {
          model = glm::translate(model, glm::vec3(pos.x, pos.y, 0.0f));
          this->pos = {pos.x, pos.y, 0.0f};
       }
+      void translate_object(glm::vec3 pos){
+         model = glm::translate(model, pos);
+         this->pos = {pos.x, pos.y, 0.0f};
+      }
       void rotate_object(float angle, glm::vec3 pos){
          model = glm::rotate(model, angle, pos);
       }
-      void draw(glm::mat4 &model, glm::mat4 view);
-      void draw(glm::mat4 &model, glm::mat4 view, Texture texture);
-      void draw(glm::mat4 &model, glm::mat4 view, glm::vec3 color);
+      void draw(glm::mat4 &model, glm::mat4 view, glm::mat4 proj, glm::vec3 color = glm::vec3(1.0f));
+      void draw(glm::mat4 &model, glm::mat4 view, glm::vec3 color = glm::vec3(1.0f));
 };
 
 

@@ -1,3 +1,4 @@
+#include "3D.h"
 #include "collision.h"
 #include "game.h"
 #include "orbit.h"
@@ -48,9 +49,8 @@ Object::Object(std::string src_vertex, std::string src_fragment, Image img_type)
       vertex.add_attribute(0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), 0);
    }
 }
-
 Object::Object(std::string src_vertex, std::string src_fragment, Texture *texture_sheet, Texture_sheet coord):
-   shader(src_vertex, src_fragment), tex_sheet(texture_sheet) 
+   shader(src_vertex, src_fragment), tex_sheet(texture_sheet)
 {
 
    data = {
@@ -73,6 +73,35 @@ Object::Object(std::string src_vertex, std::string src_fragment, Texture *textur
    vertex.add_attribute(1, 2, GL_FLOAT, GL_FALSE, 5*sizeof(float), 3);
 }
 
+Object::Object(std::string src_vertex, std::string src_fragment, Texture *texture_sheet, Texture_sheet coord, Image type):
+   shader(src_vertex, src_fragment), tex_sheet(texture_sheet), tex_type(type)
+{
+   data = {
+      .tex_tr{(coord.x_index*coord.sprite_width)/coord.sheet_width, (coord.y_index*coord.sprite_height)/coord.sheet_height},
+      .tex_br{((coord.x_index+1)*coord.sprite_width)/coord.sheet_width, (coord.y_index*coord.sprite_height)/coord.sheet_height},
+      .tex_bl{((coord.x_index+1)*coord.sprite_width)/coord.sheet_width, ((coord.y_index+1)*coord.sprite_height)/coord.sheet_height},
+      .tex_tl{(coord.x_index*coord.sprite_width)/coord.sheet_width, ((coord.y_index+1)*coord.sprite_height)/coord.sheet_height},
+   };
+   if (type == CUBE){
+      //FIXME:
+      vertex.create_VBO(vertices_cube, sizeof(vertices_cube));
+      vertex.add_attribute(0, 3, GL_FLOAT, GL_FALSE, 5*sizeof(float), 0);
+      vertex.add_attribute(1, 2, GL_FLOAT, GL_FALSE, 5*sizeof(float), 3);
+   }
+   else {
+      float data_obj[] = {
+           0.5f,  0.5f, 0.0f,  data.tex_tr.x, data.tex_tr.y,   // top right
+           0.5f, -0.5f, 0.0f,  data.tex_br.x, data.tex_br.y,   // bottom right,
+          -0.5f, -0.5f, 0.0f,  data.tex_bl.x, data.tex_bl.y,   // bottom left
+          -0.5f,  0.5f, 0.0f,  data.tex_tl.x, data.tex_tl.y   // top left
+      };
+
+      vertex.create_VBO(data_obj, sizeof(data_obj));
+      vertex.create_EBO(indices_square, sizeof(indices_square));
+      vertex.add_attribute(0, 3, GL_FLOAT, GL_FALSE, 5*sizeof(float), 0);
+      vertex.add_attribute(1, 2, GL_FLOAT, GL_FALSE, 5*sizeof(float), 3);
+   }
+}
 
 Object::~Object(){
    shader.delete_shader();
@@ -88,38 +117,11 @@ void Object::translate_object(glm::mat4 *model, glm::vec2 pos){
 void Object::rotate_object(glm::mat4 *model, float angle, glm::vec3 pos){
    *model = glm::rotate(*model, angle, pos);
 }
-
-void Object::draw(glm::mat4 &model, glm::mat4 view, Texture texture){
-   glm::mat4 proj = get_projection(global_states.zoom);
-   if (tex_type != NONE && tex_type != LINES)
-      texture.use();
-   shader.use();
-   shader.set_matrix4fv("proj_un", proj);
-   shader.set_matrix4fv("view_un", view);
-   shader.set_matrix4fv("model_un", model);
-   shader.set_vec3("color_un", glm::vec3(1.0f));
-   if (tex_type == NONE)
-      vertex.draw_buffer(GL_POINTS, 1);
-   else
-      vertex.draw(GL_TRIANGLES, LEN(indices_square));
-}
-void Object::draw(glm::mat4 &model, glm::mat4 view){
-   glm::mat4 proj = get_projection(global_states.zoom);
-   if (tex_type != NONE && tex_type != LINES)
-      tex_sheet->use();
-   shader.use();
-   shader.set_matrix4fv("proj_un", proj);
-   shader.set_matrix4fv("view_un", view);
-   shader.set_matrix4fv("model_un", model);
-   shader.set_vec3("color_un", glm::vec3(1.0f));
-   if (tex_type == NONE)
-      vertex.draw_buffer(GL_POINTS, 1);
-   else 
-      vertex.draw(GL_TRIANGLES, LEN(indices_square));
-}
-
+ 
 void Object::draw(glm::mat4 &model, glm::mat4 view, glm::vec3 color){
-   glm::mat4 proj = get_projection(global_states.zoom);
+   draw(model, view, get_projection(global_states.zoom), color);
+}
+void Object::draw(glm::mat4 &model, glm::mat4 view, glm::mat4 proj, glm::vec3 color){
    if (tex_type != NONE && tex_type != LINES)
       tex_sheet->use();
    shader.use();
@@ -129,6 +131,8 @@ void Object::draw(glm::mat4 &model, glm::mat4 view, glm::vec3 color){
    shader.set_vec3("color_un", color);
    if (tex_type == NONE)
       vertex.draw_buffer(GL_POINTS, 1);
+   else if (tex_type == CUBE)
+      vertex.draw_buffer(GL_TRIANGLES, 36);
    else 
       vertex.draw(GL_TRIANGLES, LEN(indices_square));
 }
